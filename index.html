@@ -3,67 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BCPD Dispatch Center</title>
+    <title>ศูนย์วิทยุสื่อสาร BCPD - BIT CITIES</title>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
+        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #38bdf8; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #334155; padding-bottom: 15px; margin-bottom: 25px; }
-        .header h1 { margin: 0; color: #38bdf8; letter-spacing: 1px; }
-        .status-box { background: #000; padding: 10px 20px; border-radius: 5px; border: 1px solid #38bdf8; color: #22c55e; font-weight: bold; }
+        .header h1 { margin: 0; color: var(--accent); letter-spacing: 1px; font-size: 1.8rem; }
+        .status-box { background: #000; padding: 8px 16px; border-radius: 5px; border: 1px solid var(--accent); color: #22c55e; font-weight: bold; }
         
-        .dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .card { background-color: var(--card); border-radius: 10px; padding: 20px; border: 1px solid #334155; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .card h2 { margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #334155; color: #94a3b8; font-size: 1.2rem; text-transform: uppercase; }
+        .card h2 { margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #334155; color: #94a3b8; font-size: 1.1rem; text-transform: uppercase; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; color: #64748b; padding-bottom: 10px; }
-        td { padding: 8px 0; border-bottom: 1px solid #334155; }
+        th { text-align: left; color: #64748b; padding-bottom: 10px; font-size: 0.9rem; }
+        td { padding: 10px 0; border-bottom: 1px solid #334155; font-size: 0.95rem; }
         
-        .badge { padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
-        .s-10-8 { background: #15803d; } /* ว่าง */
-        .s-10-6 { background: #b91c1c; } /* ปฏิบัติงาน */
-        .s-10-23 { background: #a16207; } /* ถึงที่หมาย */
+        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; display: inline-block; }
+        .s-10-8 { background: #15803d; color: #fff; }
+        .s-10-6 { background: #b91c1c; color: #fff; }
+        .s-10-23 { background: #a16207; color: #fff; }
+        .s-default { background: #475569; color: #fff; }
         
-        .call-item { background: #334155; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #ef4444; }
-        .log-list { font-family: monospace; font-size: 0.9rem; }
+        .call-item { background: #334155; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #ef4444; }
+        .refresh-btn { background: var(--accent); color: #000; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>BCPD COMMUNICATION CENTER</h1>
-        <div class="status-box">🟢 ศูนย์วิทยุพร้อมปฏิบัติการ</div>
+        <h1>ศูนย์วิทยุสื่อสาร BCPD</h1>
+        <div class="status-box">🟢 ข่ายวิทยุออนไลน์</div>
     </div>
 
+    <button class="refresh-btn" onclick="loadData()">🔄 อัปเดตข้อมูลวิทยุ</button>
+
     <div class="dashboard">
-        <!-- หน่วยในข่าย -->
+        <!-- กำลังพลในข่าย -->
         <div class="card">
-            <h2>กำลังพลในข่าย (Units)</h2>
+            <h2>กำลังพลในข่าย (Active Units)</h2>
             <table>
-                <tr><th>เรียกขาน</th><th>สถานะ</th></tr>
-                <tr><td>BCPD-21</td><td><span class="badge s-10-8">10-8 ว่าง</span></td></tr>
-                <tr><td>BCPD-24</td><td><span class="badge s-10-6">10-6 ปฏิบัติงาน</span></td></tr>
-                <tr><td>BCPD-31</td><td><span class="badge s-10-23">10-23 ถึงที่เกิดเหตุ</span></td></tr>
+                <thead>
+                    <tr><th>รหัสเรียกขาน</th><th>ชื่อปฏิบัติการ</th><th>สถานะ</th></tr>
+                </thead>
+                <tbody id="units-list">
+                    <tr><td colspan="3">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
             </table>
         </div>
 
-        <!-- เหตุการณ์ -->
+        <!-- รับแจ้งเหตุ -->
         <div class="card">
             <h2>รับแจ้งเหตุ (Active Calls)</h2>
-            <div class="call-item">
-                <div style="color: #f87171; font-weight: bold;">[BC-001] ทะเลาะวิวาท</div>
-                <div style="font-size: 0.9rem; margin-top: 5px;">📍 พื้นที่: Downtown | 👮 หน่วย: BCPD-24</div>
-            </div>
-        </div>
-
-        <!-- บันทึกวิทยุ -->
-        <div class="card">
-            <h2>บันทึกวิทยุ (Radio Log)</h2>
-            <div class="log-list">
-                <div>[16:40] BCPD-21 -> 10-8</div>
-                <div>[16:42] BCPD-24 -> 10-6 (เหตุ BC-001)</div>
-                <div>[16:45] BCPD-31 -> 10-23</div>
+            <div id="calls-list">
+                <div>กำลังโหลดข้อมูล...</div>
             </div>
         </div>
     </div>
+
+    <script>
+        const SHEET_ID = '11JrUuWvb1wgZJ4dEK-xo9b7ziqi7H4H0Zb2FVuIiB7Q';
+        
+        function getBadgeClass(status) {
+            if (!status) return 's-default';
+            if (status.includes('10-8')) return 's-10-8';
+            if (status.includes('10-6')) return 's-10-6';
+            if (status.includes('10-23')) return 's-10-23';
+            return 's-default';
+        }
+
+        async function loadData() {
+            try {
+                // ดึงข้อมูล Units
+                const resUnits = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
+                const textUnits = await resUnits.text();
+                const jsonUnits = JSON.parse(textUnits.substring(47, textUnits.length - 2));
+                const rowsUnits = jsonUnits.table.rows;
+
+                let unitsHTML = '';
+                rowsUnits.forEach((row, index) => {
+                    if (index === 0 && row.c[0]?.v === 'Callsign') return; // ข้ามหัวตาราง
+                    const callsign = row.c[0] ? row.c[0].v : '-';
+                    const name = row.c[1] ? row.c[1].v : '-';
+                    const status = row.c[2] ? row.c[2].v : '10-8';
+                    
+                    unitsHTML += `
+                        <tr>
+                            <td><b>${callsign}</b></td>
+                            <td>${name}</td>
+                            <td><span class="badge ${getBadgeClass(status)}">${status}</span></td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('units-list').innerHTML = unitsHTML || '<tr><td colspan="3">ไม่มีข้อมูลกำลังพล</td></tr>';
+
+                // ดึงข้อมูล Calls
+                const resCalls = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Calls`);
+                const textCalls = await resCalls.text();
+                const jsonCalls = JSON.parse(textCalls.substring(47, textCalls.length - 2));
+                const rowsCalls = jsonCalls.table.rows;
+
+                let callsHTML = '';
+                rowsCalls.forEach((row, index) => {
+                    if (index === 0 && row.c[0]?.v === 'CaseID') return; // ข้ามหัวตาราง
+                    const caseId = row.c[0] ? row.c[0].v : '-';
+                    const incident = row.c[1] ? row.c[1].v : '-';
+                    const location = row.c[2] ? row.c[2].v : '-';
+                    const status = row.c[3] ? row.c[3].v : 'Active';
+
+                    callsHTML += `
+                        <div class="call-item">
+                            <div style="color: #f87171; font-weight: bold;">[${caseId}] ${incident}</div>
+                            <div style="font-size: 0.85rem; margin-top: 5px;">📍 สถานที่: ${location} | สถานะ: ${status}</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('calls-list').innerHTML = callsHTML || '<div>ไม่มีเหตุการณ์แจ้งในขณะนี้</div>';
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // โหลดข้อมูลทันทีเมื่อเปิดหน้าเว็บ
+        loadData();
+        // อัปเดตข้อมูลอัตโนมัติทุกๆ 15 วินาที
+        setInterval(loadData, 15000);
+    </script>
 </body>
 </html>
