@@ -4,302 +4,142 @@ html = r'''<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ERLC // CAD DISPATCH</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ERLC // ศูนย์สั่งการ CAD</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#05080a;--panel:#0b1210;--panel2:#0f1a15;--line:#1c2b25;--bright:#2b4438;--green:#38ffa0;--amber:#ffb020;--red:#ff3b3b;--blue:#55aaff;--text:#dfeee6;--dim:#6f8478;--mono:'JetBrains Mono',monospace;--disp:'Rajdhani',sans-serif;--sans:'Inter',sans-serif}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
-button,input,textarea{font:inherit}button{cursor:pointer}::selection{background:var(--green);color:#03110a}
-#grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:42px 42px;opacity:.28}
-#scanlines{position:fixed;inset:0;z-index:45;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
-#login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50}
-.login-box{width:380px;background:rgba(11,18,16,.94);border:1px solid var(--bright);padding:34px 30px;position:relative;box-shadow:0 30px 90px #000}
-.login-box:before{content:"";position:absolute;top:-1px;left:-1px;right:-1px;height:3px;background:linear-gradient(90deg,var(--green),var(--amber))}
-.eyebrow,.login-sub,.login-foot,.pin-dots,.login-error{font-family:var(--mono)}
-.eyebrow{font-size:10px;letter-spacing:.2em;color:var(--dim);margin-bottom:9px}.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 9px var(--green)}
-.login-title{font-family:var(--disp);font-size:38px;margin:0;font-weight:700}.login-title span{color:var(--green)}.login-sub{font-size:10px;color:var(--dim);margin:5px 0 25px}
-.pin-dots{display:flex;justify-content:center;gap:8px;margin-bottom:12px}.pin-dots i{width:9px;height:9px;border:1px solid var(--bright);border-radius:50%}.pin-dots i.filled{background:var(--green);border-color:var(--green);box-shadow:0 0 8px var(--green)}
-#pin-input{width:100%;background:var(--bg);border:1px solid var(--bright);color:transparent;caret-color:var(--green);text-align:center;font-size:22px;letter-spacing:.6em;padding:13px;outline:none}
-#pin-input:focus{border-color:var(--green);box-shadow:0 0 0 3px #38ffa01c}
-#login-btn,#send-report-btn{width:100%;margin-top:14px;padding:13px;background:var(--green);color:#03150c;border:0;font-family:var(--disp);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-#login-btn:disabled,#send-report-btn:disabled{opacity:.5;cursor:wait}.login-error{color:var(--red);font-size:11px;min-height:17px;margin-top:10px}.login-foot{border-top:1px dashed var(--line);padding-top:15px;margin-top:18px;text-align:center;color:var(--dim);font-size:9px}
-#app{display:none;position:relative;z-index:1}header{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:13px 24px;background:#0b1210e8;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
-.brand{display:flex;align-items:center;gap:10px}.brand-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.brand h1{font-family:var(--disp);font-size:19px;margin:0}.brand h1 b{color:var(--amber)}.brand small{display:block;font:9px var(--mono);color:var(--dim);letter-spacing:.14em}
-.header-right{display:flex;align-items:center;gap:18px}#clock{text-align:right;font:11px var(--mono);color:var(--dim)}#clock b{display:block;color:var(--green);font-size:14px}
-#whoami{text-align:right;font:11px var(--mono);color:var(--dim);line-height:1.4}#whoami b{color:var(--text)}.rank-tag{color:var(--amber)}
-#logout-btn,.small-btn{background:transparent;border:1px solid var(--bright);color:var(--dim);padding:8px 11px;font:10px var(--mono)}#logout-btn:hover,.small-btn:hover{border-color:var(--red);color:var(--red)}
-main{max-width:1500px;margin:auto;padding:20px 24px 100px;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px}
-.card{background:linear-gradient(180deg,#0f1a15b8,#0b1210b8);border:1px solid var(--line);padding:18px;position:relative;margin-bottom:18px}.card:after{content:"";position:absolute;top:0;left:0;width:25px;height:25px;border-top:2px solid var(--green);border-left:2px solid var(--green);opacity:.45}
-.card h2{font:700 13px var(--disp);letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin:0 0 13px;display:flex;justify-content:space-between}.count{color:var(--amber);font:10px var(--mono)}
-.grid-btns{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:8px}.pill-btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:11px 7px;font-size:12px;transition:.15s}.pill-btn:hover{border-color:var(--dim);transform:translateY(-1px)}.pill-btn.selected{border-color:var(--green);color:var(--green);background:#38ffa016}.pill-btn.incident.selected{border-color:var(--amber);color:var(--amber);background:#ffb02016}
-.selection-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px;font:10px var(--mono);color:var(--dim)}.selection-strip span{border:1px solid var(--line);padding:5px 8px}.selection-strip b{color:var(--text)}
-textarea{width:100%;min-height:82px;resize:vertical;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:11px;outline:0;font-size:12px}textarea:focus,input:focus{border-color:var(--green)}
-#report-status,#search-status{font:10px var(--mono);margin-top:8px;min-height:15px}
-.search-row{display:flex;gap:7px}.search-row input{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:11px;font:12px var(--mono);outline:0}.search-row button{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:0 17px;font:700 12px var(--disp)}
-.record{border:1px solid var(--line);border-left:2px solid var(--green-dim);background:var(--panel2);padding:12px;margin-top:8px}.rname{font-size:14px;font-weight:600;margin-bottom:8px}.record-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;font:10px var(--mono);color:var(--dim)}.record-grid b{color:var(--text)}.flag-bad{color:var(--red)!important}.flag-ok{color:var(--green)!important}
-.unit-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font:11px var(--mono)}.unit-row:last-child{border:0}.unit-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px}.unit-dot.on{background:var(--green);box-shadow:0 0 7px var(--green)}.unit-dot.busy{background:var(--amber);box-shadow:0 0 7px var(--amber)}.unit-dot.off{background:#444}.unit-role{color:var(--dim);font-size:10px}
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:15px}.stat{background:var(--bg);border:1px solid var(--line);padding:11px}.stat b{display:block;font:700 19px var(--disp);color:var(--green)}.stat span{font:9px var(--mono);color:var(--dim)}
-.call{border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel2);padding:11px;margin-top:8px}.call-top{display:flex;justify-content:space-between;font:700 12px var(--disp)}.call-meta{font:10px var(--mono);color:var(--dim);margin-top:5px}.call-actions{display:flex;gap:6px;margin-top:8px}.call-actions button{font:9px var(--mono);padding:6px 8px;background:transparent;border:1px solid var(--line);color:var(--dim)}.call-actions button:hover{border-color:var(--green);color:var(--green)}
-.log-feed{margin-top:16px;border-top:1px dashed var(--line);padding-top:15px}.log-line{display:flex;gap:8px;font:10px var(--mono);color:var(--dim);margin:6px 0}.log-line .t{color:var(--green)}
-#sos-btn{position:fixed;right:25px;bottom:25px;width:68px;height:68px;border-radius:50%;background:var(--red);border:2px solid #ff8080;color:#180000;font:800 13px var(--disp);z-index:20;box-shadow:0 0 0 0 #ff3b3b66;animation:pulse 2.2s infinite}@keyframes pulse{70%{box-shadow:0 0 0 18px transparent}100%{box-shadow:0 0 0 0 transparent}}
-#sos-modal{position:fixed;inset:0;background:#05080acc;z-index:70;display:none;align-items:center;justify-content:center}.sos-box{width:330px;background:var(--panel);border:1px solid var(--red);padding:25px;text-align:center}.sos-box h3{font:700 21px var(--disp);color:var(--red);margin:0 0 8px}.sos-box p{font:10px var(--mono);color:var(--dim)}.sos-actions{display:flex;gap:8px}.sos-actions button{flex:1;padding:10px;border:0}.confirm{background:var(--red)}.cancel{background:var(--panel2);color:var(--dim);border:1px solid var(--line)}
-#toast{position:fixed;top:17px;left:50%;transform:translate(-50%,-150%);z-index:100;background:var(--panel);border:1px solid var(--green);color:var(--green);padding:10px 18px;font:11px var(--mono);transition:.25s}#toast.show{transform:translate(-50%,0)}#toast.err{border-color:var(--red);color:var(--red)}
-@media(max-width:900px){main{grid-template-columns:1fr;padding:15px 12px 100px}header{padding:11px 13px}.brand small{display:none}.header-right{gap:7px}#clock{display:none}.login-box{width:calc(100% - 30px)}}
+:root{--bg:#030914;--panel:#071426;--panel2:#0a1b31;--line:#153457;--blue:#27a8ff;--cyan:#55ddff;--gold:#ffc34d;--red:#ff4057;--green:#37e6a0;--text:#e7f3ff;--muted:#7891ad;--mono:'JetBrains Mono',monospace;--thai:'Kanit',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#0c2947 0,#030914 48%);color:var(--text);font-family:var(--thai);min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:linear-gradient(#153457 1px,transparent 1px),linear-gradient(90deg,#153457 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(#000,transparent)}
+#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:5}.login{width:min(420px,92vw);background:#061323ee;border:1px solid var(--line);box-shadow:0 30px 100px #000b;padding:32px;position:relative}.login:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--gold))}
+.kicker{font:11px var(--mono);color:var(--muted);letter-spacing:.15em}.title{font-size:38px;font-weight:700;margin:5px 0}.title b{color:var(--blue)}.sub{color:var(--muted);font:11px var(--mono);margin-bottom:25px}.pin{width:100%;background:#020811;border:1px solid var(--line);padding:15px;color:var(--cyan);outline:0;text-align:center;letter-spacing:.5em;font:20px var(--mono)}.primary{width:100%;border:0;background:linear-gradient(90deg,#168ee6,#36c8ff);color:#00101e;font-weight:700;padding:13px;margin-top:12px}.err{color:var(--red);font:11px var(--mono);min-height:20px;margin-top:10px}
+#app{display:none}.top{position:sticky;top:0;z-index:3;background:#061323ee;border-bottom:1px solid var(--line);backdrop-filter:blur(12px);padding:12px 24px;display:flex;justify-content:space-between;align-items:center}.brand{display:flex;gap:12px;align-items:center}.dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}.brand strong{font-size:20px}.brand small{display:block;color:var(--muted);font:9px var(--mono)}.who{text-align:right;color:var(--muted);font-size:12px}.who b{color:var(--text)}.ghost{background:#08182a;border:1px solid var(--line);color:var(--muted);padding:8px 12px;margin-left:12px}
+main{max-width:1450px;margin:auto;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px}@media(max-width:950px){main{grid-template-columns:1fr}.top{padding:10px 14px}}
+.card{background:linear-gradient(180deg,#08182bd9,#061323e8);border:1px solid var(--line);padding:18px;margin-bottom:18px;box-shadow:0 15px 45px #0004}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.head h2{font-size:16px;margin:0}.tag{font:10px var(--mono);color:var(--cyan);border:1px solid #1a527c;padding:4px 8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px}.choice{background:#08192c;border:1px solid var(--line);color:var(--text);padding:11px 8px;text-align:center}.choice:hover{border-color:var(--blue)}.choice.on{background:#0a3151;border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 15px #168ee622}
+.search{display:flex;gap:8px}.search input,.field,input,textarea{background:#020b17;border:1px solid var(--line);color:var(--text);padding:11px;outline:0;width:100%}.search input:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 2px #27a8ff18}.search button{background:#0a2844;border:1px solid var(--blue);color:var(--cyan);padding:0 20px}.status{font:11px var(--mono);color:var(--muted);margin-top:9px}
+.person{margin-top:15px;border:1px solid var(--line);background:#061426;padding:17px}.persontop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.person h3{margin:0;font-size:22px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.chip{font:10px var(--mono);padding:4px 7px;border:1px solid var(--line);color:var(--muted)}.chip.red{border-color:#6e2430;color:#ff6a7b}.chip.green{border-color:#1b684f;color:var(--green)}.info{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.info div{background:#081a2e;padding:9px;color:var(--muted);font-size:12px}.info b{display:block;color:var(--text)}.history{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}.history h4{margin:0 0 8px}.event{padding:9px 0;border-bottom:1px dashed #17304c;font-size:12px}.event small{color:var(--muted);font:10px var(--mono)}.actions{display:flex;gap:8px;margin-top:13px}.actions button{flex:1;padding:10px;border:1px solid var(--line);background:#0a1c30;color:var(--text)}.actions .bolo{border-color:#a12a3c;color:#ff6b7b;background:#2a0d15}.actions .record{border-color:#1b628b;color:var(--cyan)}
+textarea{min-height:90px;resize:vertical}.send{background:linear-gradient(90deg,#1189df,#26b8ff);border:0;padding:12px;width:100%;margin-top:9px;font-weight:700;color:#00101c}
+.unit{display:flex;justify-content:space-between;border-bottom:1px solid #102943;padding:10px 0;font-size:12px}.online{color:var(--green)}.offline{color:#5b6d80}.unit b{color:var(--text)}.feed{max-height:230px;overflow:auto}.log{font:10px var(--mono);padding:6px 0;color:var(--muted)}.log b{color:var(--cyan)}
+#sos{position:fixed;right:24px;bottom:24px;width:68px;height:68px;border-radius:50%;border:2px solid #ff8b99;background:var(--red);color:#210006;font-weight:800;z-index:4;box-shadow:0 0 25px #ff405744}
+.modal{display:none;position:fixed;inset:0;background:#02060dcc;z-index:10;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modalbox{width:min(520px,96vw);background:#061426;border:1px solid var(--blue);padding:20px}.modalbox h3{margin-top:0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}@media(max-width:600px){.info,.formgrid{grid-template-columns:1fr}}
+.toast{position:fixed;top:15px;left:50%;transform:translate(-50%,-150%);background:#061426;border:1px solid var(--cyan);color:var(--cyan);padding:10px 18px;z-index:20;transition:.25s;font:11px var(--mono)}.toast.show{transform:translate(-50%,0)}
 </style>
 </head>
 <body>
-<div id="grid-bg"></div><div id="scanlines"></div>
-
-<div id="login-screen">
-  <div class="login-box">
-    <div class="eyebrow"><span class="live-dot"></span> ERLC // RECORDS & DISPATCH</div>
-    <h1 class="login-title">CAD<span>·</span>TERM</h1>
-    <div class="login-sub">UNIT AUTHENTICATION // LOCAL DATABASE MODE</div>
-    <div class="pin-dots" id="pin-dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    <input id="pin-input" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
-    <button id="login-btn">SIGN IN</button>
-    <div class="login-error" id="login-error"></div>
-    <div class="login-foot">LOCAL CAD STORAGE · DATA PERSISTS IN THIS BROWSER</div>
-  </div>
-</div>
+<div id="login"><div class="login">
+<div class="kicker">ERLC // POLICE DEPARTMENT</div><div class="title">CAD <b>DISPATCH</b></div><div class="sub">ระบบศูนย์สั่งการและฐานข้อมูลเจ้าหน้าที่</div>
+<input id="pin" class="pin" type="password" inputmode="numeric" maxlength="8" placeholder="รหัสประจำหน่วย">
+<button id="loginBtn" class="primary">เข้าสู่ระบบ</button><div id="loginErr" class="err"></div>
+</div></div>
 
 <div id="app">
-<header>
-  <div class="brand"><span class="brand-dot"></span><div><h1>ERLC <b>CAD</b> DISPATCH</h1><small>REAL-TIME DISPATCH TERMINAL // v2</small></div></div>
-  <div class="header-right"><div id="clock"><b id="clock-time">--:--:--</b><span id="clock-date">----</span></div><div id="whoami"></div><button id="logout-btn">SIGN OUT</button></div>
-</header>
-
+<header class="top"><div class="brand"><span class="dot"></span><div><strong>ERLC POLICE CAD</strong><small>REAL-TIME DISPATCH • RECORDS • BOLO</small></div></div>
+<div><span id="who" class="who"></span><button id="logout" class="ghost">ออกจากระบบ</button></div></header>
 <main>
 <div>
-  <div class="card">
-    <h2>Command overview <span class="count" id="session-state">ONLINE</span></h2>
-    <div class="stat-grid">
-      <div class="stat"><b id="stat-units">0</b><span>UNITS ONLINE</span></div>
-      <div class="stat"><b id="stat-calls">0</b><span>ACTIVE CALLS</span></div>
-      <div class="stat"><b id="stat-reports">0</b><span>REPORTS FILED</span></div>
-    </div>
-  </div>
+<section class="card"><div class="head"><h2>📍 เลือกสถานที่เกิดเหตุ</h2><span id="zoneCount" class="tag"></span></div><div id="zones" class="grid"></div></section>
+<section class="card"><div class="head"><h2>🚨 ประเภทเหตุการณ์</h2><span id="incidentCount" class="tag"></span></div><div id="incidents" class="grid"></div></section>
 
-  <div class="card">
-    <h2>Location <span class="count" id="zone-count"></span></h2>
-    <div class="grid-btns" id="zone-grid"></div>
-  </div>
+<section class="card"><div class="head"><h2>🔎 ค้นหาประวัติบุคคล / รถ</h2><span class="tag">RECORDS</span></div>
+<div class="search"><input id="query" placeholder="พิมพ์ชื่อบุคคล หรือทะเบียนรถ..."><button id="searchBtn">ค้นหา</button></div><div id="searchStatus" class="status"></div><div id="result"></div></section>
 
-  <div class="card">
-    <h2>Incident type <span class="count" id="incident-count"></span></h2>
-    <div class="grid-btns" id="incident-grid"></div>
-  </div>
-
-  <div class="card">
-    <h2>File dispatch report</h2>
-    <div class="selection-strip"><span>LOCATION: <b id="sel-zone">NONE</b></span><span>INCIDENT: <b id="sel-incident">NONE</b></span></div>
-    <textarea id="report-notes" placeholder="Additional notes for dispatch..."></textarea>
-    <button id="send-report-btn">CREATE DISPATCH CALL</button>
-    <div id="report-status"></div>
-  </div>
-
-  <div class="card">
-    <h2>Records search</h2>
-    <div class="search-row"><input id="search-input" placeholder="Name or plate number..."><button id="search-btn">SEARCH</button></div>
-    <div id="search-status"></div><div id="search-results"></div>
-  </div>
+<section class="card"><div class="head"><h2>📡 แจ้งเหตุไปยังศูนย์</h2><span class="tag">DISPATCH</span></div>
+<div class="chips"><span id="selZone" class="chip">สถานที่: ยังไม่ได้เลือก</span><span id="selIncident" class="chip">เหตุการณ์: ยังไม่ได้เลือก</span></div>
+<textarea id="notes" placeholder="รายละเอียดเพิ่มเติม เช่น ทิศทางหลบหนี จำนวนผู้ต้องสงสัย อาวุธ ยานพาหนะ..."></textarea>
+<button id="sendReport" class="send">ส่งรายงานเข้าศูนย์สั่งการ</button></section>
 </div>
 
-<div>
-  <div class="card">
-    <h2>Active units <span class="count" id="units-count">0 online</span></h2>
-    <div id="units-list"></div>
-  </div>
+<aside>
+<section class="card"><div class="head"><h2>👮 หน่วยปฏิบัติการ</h2><span id="unitCount" class="tag"></span></div><div id="units"></div></section>
+<section class="card"><div class="head"><h2>📋 บันทึกการใช้งาน</h2></div><div id="logs" class="feed"></div></section>
+</aside>
+</main></div>
 
-  <div class="card">
-    <h2>Active calls <span class="count" id="calls-count">0</span></h2>
-    <div id="calls-list"></div>
-  </div>
+<button id="sos">SOS</button><div id="toast" class="toast"></div>
 
-  <div class="card">
-    <h2>Session log</h2>
-    <div id="log-list"></div>
-  </div>
-</div>
-</main>
-</div>
-
-<button id="sos-btn">SOS</button>
-
-<div id="sos-modal"><div class="sos-box"><h3>⚠ CONFIRM SOS</h3><p>Send an emergency alert to the dispatch channel?</p><div class="sos-actions"><button class="cancel" id="sos-cancel">CANCEL</button><button class="confirm" id="sos-confirm">SEND SOS</button></div></div></div>
-<div id="toast"></div>
+<div id="modal" class="modal"><div class="modalbox">
+<div class="head"><h3 id="modalTitle">บันทึกข้อมูล</h3><button id="closeModal" class="ghost">ปิด</button></div>
+<div id="modalBody"></div>
+</div></div>
 
 <script>
-/* =========================================================
-   ERLC CAD — SINGLE FILE EDITION
-   ใช้โค้ดเดิมเป็นฐาน + เพิ่มระบบ Calls/Units/Records/Local Save
-   ========================================================= */
-
 const UNITS_SHEET_ID="11JrUuWvb1wgZJ4dEK-xo9b7ziqi7H4H0Zb2FVuIiB7Q";
 const DATABASE_SHEET_ID="1-6APHkfsmXqFHbwcw1cCm8yo_MYD1OzIRD7x8AeyXCk";
 const DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1490811672129175753/vEDTTyvqk1pskfw8QypBE6Ofpg-vyVW45x3Ybg4chbbfHBfFbx2UCnNvbCZ7roL6ahWd";
+const U={callsign:0,name:1,rank:2,status:3,pin:4};
+const D={name:0,plate:1,vtype:2,expiry:3,fines:4,license:5,gunpermit:6,notes:7,bolo:8,history:9};
 
-const UNITS_COL={callsign:0,name:1,rank:2,status:3,pin:4};
-const DB_COL={name:0,plate:1,vtype:2,expiry:3,fines:4,license:5,gunpermit:6,notes:7};
+const ZONES=["Pinewood","Springfield","River City","Bayside","Woodland","Sandy Shores","Liberty County Airport","Liberty County Sheriff Office","Liberty County Police Department","Hospital","Bank","Jewelry Store","Gas Station","Substation","Highway","Interstate","Docks","Port","Tunnel","Construction Site","Farm","Ranch","Suburbs","Downtown","Residential Area","Shopping Center"];
+const INCIDENTS=["ปล้นธนาคาร","ปล้นร้านค้า","ปล้นร้านเพชร","ยิงปะทะ","บุคคลมีอาวุธ","รถต้องสงสัย","ไล่ล่าด้วยยานพาหนะ","ขับรถประมาท","ฝ่าด่านตรวจ","บุกรุก","ทำร้ายร่างกาย","ลักพาตัว","โจรกรรมรถ","ทะเลาะวิวาท","ผู้ต้องสงสัยหลบหนี","เจ้าหน้าที่ขอกำลังเสริม","เจ้าหน้าที่ได้รับบาดเจ็บ","เหตุฉุกเฉินอื่นๆ"];
 
-const ZONES=["Bank","Jewelry Store","Gas Station","Highway","Cayo Perico","Airport","Sheriff Office","Hospital","Convenience Store","Warehouse","Yacht","Ammunation","Casino","Train Station","Docks"];
-const INCIDENTS=["Robbery","Armed 10-90","Shootout","Roadblock breach","Suspicious person","Pursuit","Hostage situation","Reckless driving","Assault","Kidnapping","Grand theft auto","Officer down"];
+let user=null,zone=null,incident=null,currentPerson=null;
 
-const DEMO_UNITS=[
- {callsign:"1-ADAM-01",name:"Dispatch",rank:"Supervisor",status:"ONLINE",pin:"1234"},
- {callsign:"2-ADAM-21",name:"Officer Demo",rank:"Police Officer",status:"ONLINE",pin:"2222"},
- {callsign:"3-LINCOLN-05",name:"Unit Demo",rank:"Sheriff",status:"OFF DUTY",pin:"3333"}
-];
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function toast(s){let x=document.getElementById("toast");x.textContent=s;x.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>x.classList.remove("show"),2800)}
+function log(s){let x=document.getElementById("logs");let d=document.createElement("div");d.className="log";d.innerHTML="<b>"+new Date().toLocaleTimeString("th-TH")+"</b> "+esc(s);x.prepend(d);while(x.children.length>35)x.lastChild.remove()}
+async function rows(id,sheet){let r=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`);if(!r.ok)throw Error(r.status);let t=await r.text();let j=JSON.parse(t.slice(t.indexOf("(")+1,t.lastIndexOf(")")));return (j.table?.rows||[]).map(x=>(x.c||[]).map(c=>c?.v??""))}
 
-let currentUser=null,selectedZone=null,selectedIncident=null;
-let units=[],calls=[],records=[];
-let clockTimer=null,unitTimer=null;
+document.getElementById("loginBtn").onclick=async()=>{
+ let pin=document.getElementById("pin").value.trim(),e=document.getElementById("loginErr");e.textContent="";
+ if(!pin)return e.textContent="กรุณากรอกรหัสประจำหน่วย";
+ try{let a=await rows(UNITS_SHEET_ID,"Units"),m=a.find(r=>String(r[U.pin]||"").trim()===pin);
+ if(!m)return e.textContent="ไม่พบรหัสประจำหน่วย";
+ user={callsign:m[0]||"—",name:m[1]||"—",rank:m[2]||"—"};document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";document.getElementById("who").innerHTML="<b>"+esc(user.callsign)+"</b> "+esc(user.name)+"<br>"+esc(user.rank);build();loadUnits();log("เข้าสู่ระบบโดย "+user.callsign);toast("เข้าสู่ระบบสำเร็จ")
+ }catch(x){e.textContent="เชื่อมต่อฐานข้อมูลไม่ได้"}};
+document.getElementById("pin").onkeydown=e=>{if(e.key==="Enter")document.getElementById("loginBtn").click()};
+document.getElementById("logout").onclick=()=>location.reload();
 
-const $=id=>document.getElementById(id);
-const store={
- get(k,f=[]){try{return JSON.parse(localStorage.getItem("erlc_cad_"+k))??f}catch{return f}},
- set(k,v){localStorage.setItem("erlc_cad_"+k,JSON.stringify(v))}
-};
-
-function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
-function toast(msg,err=false){const t=$("toast");t.textContent=msg;t.className=err?"show err":"show";clearTimeout(toast.t);toast.t=setTimeout(()=>t.className="",3000)}
-function logLine(msg){const l=$("log-list");const d=document.createElement("div");d.className="log-line";d.innerHTML=`<span class="t">${new Date().toLocaleTimeString([], {hour12:false})}</span><span>${escapeHtml(msg)}</span>`;l.prepend(d);while(l.children.length>40)l.lastChild.remove()}
-function tickClock(){const n=new Date();$("clock-time").textContent=n.toLocaleTimeString([], {hour12:false});$("clock-date").textContent=n.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"})}
-
-async function fetchSheetRows(id,tab){
- const url=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
- const r=await fetch(url);if(!r.ok)throw Error("Sheet "+r.status);
- const txt=await r.text();const j=JSON.parse(txt.substring(txt.indexOf("(")+1,txt.lastIndexOf(")")));
- return (j.table?.rows||[]).map(x=>(x.c||[]).map(c=>c?.v==null?"":String(c.v)));
+function build(){
+ let z=document.getElementById("zones"),i=document.getElementById("incidents");z.innerHTML="";i.innerHTML="";
+ ZONES.forEach(v=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.onclick=()=>{zone=v;z.querySelectorAll(".choice").forEach(x=>x.classList.remove("on"));b.classList.add("on");document.getElementById("selZone").textContent="สถานที่: "+v};z.append(b)});
+ INCIDENTS.forEach(v=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.onclick=()=>{incident=v;i.querySelectorAll(".choice").forEach(x=>x.classList.remove("on"));b.classList.add("on");document.getElementById("selIncident").textContent="เหตุการณ์: "+v};i.append(b)});
+ document.getElementById("zoneCount").textContent=ZONES.length+" จุด";document.getElementById("incidentCount").textContent=INCIDENTS.length+" เหตุการณ์"
 }
-
-/* ---------- LOGIN: พยายามอ่าน Google Sheet ก่อน ถ้าไม่ได้ใช้ local demo ---------- */
-$("pin-input").addEventListener("input",()=>{const n=$("pin-input").value.length;document.querySelectorAll("#pin-dots i").forEach((x,i)=>x.classList.toggle("filled",i<n))});
-$("pin-input").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
-$("login-btn").onclick=login;
-
-async function login(){
- const pin=$("pin-input").value.trim();$("login-error").textContent="";
- if(!pin){$("login-error").textContent="Enter your unit PIN.";return}
- $("login-btn").disabled=true;$("login-btn").textContent="VERIFYING...";
- try{
-   let rows=[];
-   try{rows=await fetchSheetRows(UNITS_SHEET_ID,"Units")}catch(e){}
-   let m=rows.find(r=>(r[UNITS_COL.pin]||"").trim()===pin);
-   if(m) currentUser={callsign:m[0]||"—",name:m[1]||"—",rank:m[2]||"—"};
-   else{
-     const local=store.get("units",DEMO_UNITS);const lm=local.find(u=>String(u.pin)===pin);
-     if(!lm)throw Error("bad");
-     currentUser={callsign:lm.callsign,name:lm.name,rank:lm.rank};
-   }
-   enterApp();
- }catch(e){
-   $("login-error").textContent="⚠ INVALID PIN";
-   $("pin-input").value="";document.querySelectorAll("#pin-dots i").forEach(x=>x.classList.remove("filled"));
- }finally{$("login-btn").disabled=false;$("login-btn").textContent="SIGN IN"}
-}
-
-function enterApp(){
- $("login-screen").style.display="none";$("app").style.display="block";
- $("whoami").innerHTML=`<b>${escapeHtml(currentUser.callsign)}</b><br><span class="rank-tag">${escapeHtml(currentUser.rank)}</span>`;
- units=store.get("units",DEMO_UNITS);calls=store.get("calls",[]);records=store.get("records",[]);
- buildButtons();renderAll();tickClock();clockTimer=setInterval(tickClock,1000);unitTimer=setInterval(loadUnits,30000);
- logLine(`${currentUser.callsign} signed in`);toast(`WELCOME ${currentUser.callsign}`);
-}
-
-$("logout-btn").onclick=()=>{
- logLine(`${currentUser.callsign} signed out`);clearInterval(clockTimer);clearInterval(unitTimer);
- currentUser=null;$("app").style.display="none";$("login-screen").style.display="flex";$("pin-input").value="";
- document.querySelectorAll("#pin-dots i").forEach(x=>x.classList.remove("filled"));
-};
-
-function buildButtons(){
- const zg=$("zone-grid"),ig=$("incident-grid");zg.innerHTML="";ig.innerHTML="";
- ZONES.forEach(z=>{const b=document.createElement("button");b.className="pill-btn";b.textContent=z;b.onclick=()=>{selectedZone=z;[...zg.children].forEach(x=>x.classList.remove("selected"));b.classList.add("selected");$("sel-zone").textContent=z};zg.appendChild(b)});
- INCIDENTS.forEach(i=>{const b=document.createElement("button");b.className="pill-btn incident";b.textContent=i;b.onclick=()=>{selectedIncident=i;[...ig.children].forEach(x=>x.classList.remove("selected"));b.classList.add("selected");$("sel-incident").textContent=i};ig.appendChild(b)});
- $("zone-count").textContent=ZONES.length;$("incident-count").textContent=INCIDENTS.length;
-}
-
-/* ---------- UNITS ---------- */
 async function loadUnits(){
- try{
-  const rows=await fetchSheetRows(UNITS_SHEET_ID,"Units");
-  if(rows.length) units=rows.map(r=>({callsign:r[0]||"—",name:r[1]||"—",rank:r[2]||"—",status:r[3]||"OFF DUTY",pin:r[4]||""}));
- }catch(e){}
- store.set("units",units);renderUnits();
-}
-function renderUnits(){
- const list=$("units-list");list.innerHTML="";
- let online=0;
- units.forEach((u,i)=>{
-  const st=String(u.status).toUpperCase();const onlineNow=/ONLINE|ON DUTY|10-8/.test(st);const busy=/BUSY|10-6|EN ROUTE/.test(st);
-  if(onlineNow||busy)online++;
-  const d=document.createElement("div");d.className="unit-row";
-  d.innerHTML=`<div><span class="unit-dot ${busy?"busy":onlineNow?"on":"off"}"></span><b>${escapeHtml(u.callsign)}</b></div><div class="unit-role">${escapeHtml(u.rank)} · ${escapeHtml(st)}</div>`;
-  list.appendChild(d);
- });
- $("units-count").textContent=`${online} online`;$("stat-units").textContent=online;
-}
+ try{let a=await rows(UNITS_SHEET_ID,"Units"),x=document.getElementById("units");x.innerHTML="";let on=0;a.forEach(r=>{let yes=/online|on duty|พร้อม|ปฏิบัติ|1/i.test(r[U.status]||"");if(yes)on++;let d=document.createElement("div");d.className="unit";d.innerHTML=`<span><span class="${yes?"online":"offline"}">●</span> <b>${esc(r[0]||"—")}</b></span><span>${esc(r[2]||"")}</span>`;x.append(d)});document.getElementById("unitCount").textContent=on+" ออนไลน์"}catch(e){document.getElementById("units").innerHTML="<span class=status>โหลดรายชื่อหน่วยไม่สำเร็จ</span>"}}
 
-/* ---------- DISPATCH CALLS ---------- */
-$("send-report-btn").onclick=createCall;
-function createCall(){
- const notes=$("report-notes").value.trim();if(!selectedZone||!selectedIncident){$("report-status").style.color="var(--red)";$("report-status").textContent="Select location and incident first.";return}
- const c={id:"CAD-"+Date.now().toString(36).toUpperCase(),zone:selectedZone,incident:selectedIncident,notes,unit:currentUser.callsign,createdAt:new Date().toISOString(),status:"ACTIVE"};
- calls.unshift(c);store.set("calls",calls);$("report-notes").value="";$("report-status").style.color="var(--green)";$("report-status").textContent=`CALL ${c.id} CREATED`;
- renderCalls();toast("DISPATCH CALL CREATED");logLine(`${c.id} — ${c.incident} @ ${c.zone}`);
- sendDiscord("🚨 NEW DISPATCH CALL",c,0x38ffa0);
+document.getElementById("searchBtn").onclick=search;
+document.getElementById("query").onkeydown=e=>{if(e.key==="Enter")search()};
+async function search(){
+ let q=document.getElementById("query").value.trim().toLowerCase(),out=document.getElementById("result"),st=document.getElementById("searchStatus");out.innerHTML="";currentPerson=null;if(!q){st.textContent="กรุณาพิมพ์ชื่อหรือทะเบียนรถ";return}st.textContent="กำลังค้นหา...";
+ try{let a=await rows(DATABASE_SHEET_ID,"Sheet1"),m=a.filter(r=>String(r[D.name]||"").toLowerCase().includes(q)||String(r[D.plate]||"").toLowerCase().includes(q));if(!m.length){st.textContent="ไม่พบข้อมูล";log("ค้นหา "+q+" — ไม่พบข้อมูล");return}st.textContent="พบ "+m.length+" รายการ";m.slice(0,20).forEach(r=>out.append(renderPerson(r)));log("ค้นหา "+q+" — พบ "+m.length+" รายการ")}catch(e){st.textContent="เชื่อมต่อฐานข้อมูลไม่ได้"}}
+function renderPerson(r){
+ let bolo=String(r[D.bolo]||"").trim(),hist=String(r[D.history]||"").trim(),fine=r[D.fines]||"0",d=document.createElement("div");d.className="person";
+ let history=hist?hist.split(/\n|\|/).filter(Boolean).map(v=>`<div class="event">${esc(v)}</div>`).join(""):"<div class=status>ยังไม่มีประวัติการก่อเหตุ</div>";
+ d.innerHTML=`<div class="persontop"><div><h3>${esc(r[D.name]||"ไม่ทราบชื่อ")}</h3><div class="chips">${bolo?'<span class="chip red">⚠ BOLO / เฝ้าระวัง</span>':'<span class="chip green">✓ ไม่มี BOLO</span>'}</div></div><span class="tag">PERSON RECORD</span></div>
+ <div class="info"><div>ทะเบียนรถ<b>${esc(r[D.plate]||"—")}</b></div><div>ยานพาหนะ<b>${esc(r[D.vtype]||"—")}</b></div><div>ใบขับขี่<b>${esc(r[D.license]||"—")}</b></div><div>ใบอนุญาตอาวุธ<b>${esc(r[D.gunpermit]||"—")}</b></div><div>ค่าปรับค้าง<b>${esc(fine)}</b></div><div>วันหมดอายุ<b>${esc(r[D.expiry]||"—")}</b></div></div>
+ <div class="history"><h4>📋 ประวัติการก่อเหตุ</h4>${history}</div>
+ <div class="actions"><button class="bolo" onclick='openAction("bolo",${JSON.stringify(r)})'>🚨 แจ้ง BOLO</button><button class="record" onclick='openAction("history",${JSON.stringify(r)})'>➕ เพิ่มประวัติการก่อเหตุ</button></div>`;
+ return d
 }
-function renderCalls(){
- const box=$("calls-list");box.innerHTML="";const active=calls.filter(c=>c.status==="ACTIVE");
- $("calls-count").textContent=active.length;$("stat-calls").textContent=active.length;$("stat-reports").textContent=calls.length;
- if(!active.length){box.innerHTML='<div style="font:10px var(--mono);color:var(--dim)">NO ACTIVE CALLS</div>';return}
- active.slice(0,15).forEach(c=>{
-  const d=document.createElement("div");d.className="call";d.innerHTML=`<div class="call-top"><span>${escapeHtml(c.incident)}</span><span style="color:var(--amber)">${escapeHtml(c.id)}</span></div><div class="call-meta">📍 ${escapeHtml(c.zone)} · UNIT ${escapeHtml(c.unit)}<br>${escapeHtml(c.notes||"No additional notes")}</div><div class="call-actions"><button data-id="${c.id}" data-act="assign">MARK ASSIGNED</button><button data-id="${c.id}" data-act="close">CLOSE CALL</button></div>`;
-  d.querySelectorAll("button").forEach(b=>b.onclick=()=>{const x=calls.find(z=>z.id===b.dataset.id);if(!x)return;if(b.dataset.act==="close")x.status="CLOSED";else x.status="ASSIGNED";store.set("calls",calls);renderCalls();logLine(`${x.id} marked ${x.status}`);toast(`${x.id} ${x.status}`)});
-  box.appendChild(d)
- })
+function openAction(type,r){
+ currentPerson=r;let modal=document.getElementById("modal"),body=document.getElementById("modalBody");document.getElementById("modalTitle").textContent=type==="bolo"?"🚨 เพิ่ม BOLO / บุคคลต้องเฝ้าระวัง":"📋 เพิ่มประวัติการก่อเหตุ";
+ body.innerHTML=`<div class="status">บุคคล: <b>${esc(r[D.name]||"—")}</b> • ทะเบียน: <b>${esc(r[D.plate]||"—")}</b></div><br>
+ ${type==="history"?`<div class="formgrid"><div><label>ประเภทเหตุ</label><input id="aType" placeholder="เช่น หลบหนีเจ้าหน้าที่"></div><div><label>สถานที่</label><input id="aPlace" value="${esc(zone||"")}"></div></div>`:`<div class="formgrid"><div><label>ระดับ BOLO</label><input id="aType" value="เฝ้าระวัง"></div><div><label>สถานที่ล่าสุด</label><input id="aPlace" value="${esc(zone||"")}"></div></div>`}
+ <br><textarea id="aNote" placeholder="รายละเอียด / เหตุผล / ข้อมูลเพิ่มเติม"></textarea><button id="saveAction" class="send">บันทึกและแจ้ง Discord</button>`;
+ modal.classList.add("show");document.getElementById("saveAction").onclick=()=>saveAction(type,r)
 }
-
-/* ---------- RECORDS ---------- */
-$("search-btn").onclick=runSearch;$("search-input").onkeydown=e=>{if(e.key==="Enter")runSearch()};
-async function runSearch(){
- const q=$("search-input").value.trim().toLowerCase();$("search-results").innerHTML="";
- if(!q){$("search-status").textContent="Type a name or plate.";return}
- $("search-status").textContent="SEARCHING...";
- let rows=[];
- try{rows=await fetchSheetRows(DATABASE_SHEET_ID,"Sheet1")}catch(e){}
- if(!rows.length)rows=records.map(r=>[r.name,r.plate,r.vtype,r.expiry,r.fines,r.license,r.gunpermit,r.notes]);
- const m=rows.filter(r=>(r[0]||"").toLowerCase().includes(q)||(r[1]||"").toLowerCase().includes(q));
- $("search-status").textContent=`${m.length} record(s) found`;
- m.slice(0,25).forEach(r=>{
-  const d=document.createElement("div");d.className="record";const fine=r[4]||"0";const bad=parseFloat(String(fine).replace(/[^0-9.]/g,""))>0;
-  d.innerHTML=`<div class="rname">${escapeHtml(r[0]||"Unknown")}</div><div class="record-grid"><div>Plate: <b>${escapeHtml(r[1]||"—")}</b></div><div>Vehicle: <b>${escapeHtml(r[2]||"—")}</b></div><div>Expiry: <b>${escapeHtml(r[3]||"—")}</b></div><div>Fines: <b class="${bad?"flag-bad":"flag-ok"}">${escapeHtml(fine)}</b></div><div>License: <b>${escapeHtml(r[5]||"—")}</b></div><div>Gun permit: <b>${escapeHtml(r[6]||"—")}</b></div></div>`;
-  $("search-results").appendChild(d)
- });
- logLine(`Search "${q}" — ${m.length} match(es)`);
-}
-
-/* ---------- DISCORD ---------- */
-async function sendDiscord(title,c,color){
- try{
-  await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[{title,color,fields:[{name:"Location",value:c.zone||"—",inline:true},{name:"Incident",value:c.incident||"—",inline:true},{name:"Unit",value:c.unit||currentUser?.callsign||"—",inline:false},{name:"Notes",value:c.notes||"—",inline:false}],timestamp:new Date().toISOString()}]})});
- }catch(e){console.warn("Discord unavailable",e)}
-}
-
-/* ---------- SOS ---------- */
-$("sos-btn").onclick=()=>{if(currentUser)$("sos-modal").style.display="flex"};
-$("sos-cancel").onclick=()=>{$("sos-modal").style.display="none"};
-$("sos-confirm").onclick=async()=>{ $("sos-modal").style.display="none";const c={zone:selectedZone||"Not set",incident:"SOS — OFFICER NEEDS ASSISTANCE",unit:currentUser.callsign,notes:"PANIC BUTTON"};await sendDiscord("🆘 SOS — OFFICER NEEDS ASSISTANCE",c,0xff3b3b);toast("SOS SENT");logLine(`⚠ SOS sent by ${currentUser.callsign}`)};
-document.onkeydown=e=>{if(e.shiftKey&&e.key.toLowerCase()==="s"&&currentUser){e.preventDefault();$("sos-modal").style.display="flex"}if(e.key==="Escape")$("sos-modal").style.display="none"};
-
-function renderAll(){renderUnits();renderCalls()}
+document.getElementById("closeModal").onclick=()=>document.getElementById("modal").classList.remove("show");
+async function saveAction(type,r){
+ let reason=document.getElementById("aNote").value.trim(),kind=document.getElementById("aType").value.trim(),place=document.getElementById("aPlace").value.trim();
+ if(!reason&&!kind){toast("กรุณาใส่รายละเอียด");return}
+ let title=type==="bolo"?"🚨 BOLO — บุคคลต้องเฝ้าระวัง":"📋 ประวัติการก่อเหตุ",color=type==="bolo"?0xff4057:0x27a8ff;
+ let embed={title,color,fields:[
+ {name:"บุคคล",value:String(r[D.name]||"—"),inline:true},{name:"ทะเบียน",value:String(r[D.plate]||"—"),inline:true},
+ {name:type==="bolo"?"ระดับ BOLO":"ประเภทเหตุ",value:kind||"—",inline:true},{name:"สถานที่",value:place||"—",inline:true},
+ {name:"รายละเอียด",value:reason||"—",inline:false},{name:"ผู้บันทึก",value:`${user.callsign} — ${user.name} (${user.rank})`,inline:false}],timestamp:new Date().toISOString()};
+ try{let res=await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[embed]})});if(!res.ok)throw Error(res.status);document.getElementById("modal").classList.remove("show");toast(type==="bolo"?"แจ้ง BOLO เข้า Discord แล้ว":"บันทึกประวัติเข้า Discord แล้ว");log((type==="bolo"?"แจ้ง BOLO ":"เพิ่มประวัติ ")+r[D.name])}catch(e){toast("ส่ง Discord ไม่สำเร็จ")}}
+document.getElementById("sendReport").onclick=async()=>{
+ if(!zone||!incident){toast("เลือกสถานที่และประเภทเหตุก่อน");return}
+ let note=document.getElementById("notes").value.trim(),embed={title:"🚨 รายงานเหตุการณ์จาก CAD",color:0x27a8ff,fields:[{name:"สถานที่",value:zone,inline:true},{name:"เหตุการณ์",value:incident,inline:true},{name:"หน่วย",value:`${user.callsign} — ${user.name}`,inline:false},{name:"รายละเอียด",value:note||"—",inline:false}],timestamp:new Date().toISOString()};
+ try{let r=await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[embed]})});if(!r.ok)throw Error();document.getElementById("notes").value="";toast("ส่งรายงานเข้าศูนย์แล้ว");log("ส่งรายงาน "+incident+" @ "+zone)}catch(e){toast("ส่งรายงานไม่สำเร็จ")}}
+document.getElementById("sos").onclick=async()=>{
+ if(!user)return;if(!confirm("ยืนยันส่ง SOS ให้เจ้าหน้าที่ทุกหน่วย?"))return;
+ let embed={title:"🆘 SOS — ขอความช่วยเหลือด่วน",color:0xff4057,fields:[{name:"หน่วย",value:`${user.callsign} — ${user.name} (${user.rank})`},{name:"สถานที่ล่าสุด",value:zone||"ไม่ได้ระบุ"}],timestamp:new Date().toISOString()};
+ try{await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:"@here **มีการกด SOS จาก CAD**",embeds:[embed]})});toast("ส่ง SOS แล้ว");log("⚠ SOS โดย "+user.callsign)}catch(e){toast("SOS ส่งไม่สำเร็จ")}};
 </script>
-</body>
-</html>'''
+</body></html>'''
 
-path = "/mnt/data/index.html"
-Path(path).write_text(html, encoding="utf-8")
-print(path)
+path=Path("/mnt/data/index.html")
+path.write_text(html,encoding="utf-8")
+print(f"สร้างไฟล์เรียบร้อย: {path}")
