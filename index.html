@@ -127,7 +127,7 @@
         <div class="header-nav">
             <div class="logo-section">
                 <h1><i class="fa-solid fa-tower-broadcast" style="color:var(--neon-blue);"></i> BCPD DISPATCH</h1>
-                <span>ER:LC INCIDENT REPORT SYSTEM SYSTEM V6</span>
+                <span>ER:LC INCIDENT REPORT SYSTEM V6</span>
             </div>
             <div class="officer-badge">
                 <div id="user-cs" style="color:#fff; font-weight:bold;">OFFICER</div>
@@ -235,13 +235,11 @@
             selectedCrime = crimeName;
         }
 
-        // อ่านข้อมูลเซลล์อย่างปลอดภัย
         function getCellVal(cell) {
             if(!cell) return '-';
             return cell.f || cell.v || '-';
         }
 
-        // ค้นหาประวัติคนร้ายจาก Sheet1 คอลัมน์ A ถึง H
         async function searchSuspect() {
             const query = document.getElementById('suspect-search-input').value.trim().toLowerCase();
             if(!query) return alert('กรุณากรอกชื่อผู้ใช้งาน หรือ ทะเบียนรถเพื่อทำการค้นหา!');
@@ -308,7 +306,6 @@
             }
         }
 
-        // ส่งรายงานเข้า Discord Webhook
         async function sendIncidentToDiscord() {
             const searchVal = document.getElementById('suspect-search-input').value.trim();
             const sName = foundSuspectData ? foundSuspectData.username : (searchVal || 'ไม่ระบุ/ต้องสงสัย');
@@ -447,7 +444,6 @@
             }
         }
 
-        // ตรวจสอบการ Login ค้างไว้
         const savedUser = localStorage.getItem('bcpd_sec_user_v6_db');
         if(savedUser) {
             currentUser = JSON.parse(savedUser);
