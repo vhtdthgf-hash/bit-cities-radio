@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BCPD V6 ULTRA - ERLC Tactical Map Dispatch</title>
+    <title>BCPD V6 ULTRA - FULL TACTICAL DISPATCH</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Sarabun:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
@@ -32,7 +32,7 @@
             min-height: 100vh;
         }
 
-        /* AUTH LOGIN */
+        /* LOGIN SCREEN */
         #login-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 20px; }
         .login-box { 
             background: var(--panel-bg); 
@@ -53,27 +53,40 @@
         .field-group input { width: 100%; padding: 14px; background: #020617; border: 1px solid var(--panel-border); border-radius: 12px; color: #fff; outline: none; font-size: 1.1rem; text-align: center; letter-spacing: 3px; font-family: 'Share Tech Mono', monospace; }
         .btn-submit-login { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); color: #000; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; font-family: 'Chakra Petch', sans-serif; }
 
-        /* DASHBOARD */
+        /* HEADER */
         .header-nav { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); padding: 14px 18px; border-radius: 16px; border: 1px solid var(--panel-border); margin-bottom: 12px; }
         .logo-section h1 { font-family: 'Chakra Petch', sans-serif; font-size: 1.2rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
         .logo-section span { font-size: 0.65rem; color: var(--neon-cyan); font-family: 'Share Tech Mono', monospace; display: block; }
         .officer-badge { background: rgba(56, 189, 248, 0.1); border: 1px solid var(--neon-blue); padding: 6px 14px; border-radius: 12px; font-size: 0.75rem; text-align: right; }
         .btn-logout { background: #1e293b; color: var(--neon-red); border: 1px solid var(--neon-red); padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; margin-top: 4px; cursor: pointer; }
 
+        /* STATUS BAR & TIMER */
+        .status-bar-auto { display: flex; justify-content: space-between; align-items: center; background: #020617; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--panel-border); margin-bottom: 12px; }
+        .status-indicator { font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .dot.active { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+        .dot.busy { background: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
+        .dot.idle { background: var(--neon-gold); box-shadow: 0 0 10px var(--neon-gold); }
+        .shift-timer { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: var(--neon-gold); background: rgba(251, 191, 36, 0.1); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--neon-gold); }
+
+        /* PANEL BOX */
         .panel-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 16px; margin-bottom: 12px; backdrop-filter: blur(8px); }
         .panel-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 12px; }
         .panel-head h3 { font-family: 'Chakra Petch', sans-serif; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
 
+        /* SELECTORS */
+        .grid-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+        .select-btn { padding: 10px 4px; background: #020617; border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-sub); font-size: 0.72rem; font-weight: bold; cursor: pointer; text-align: center; font-family: 'Chakra Petch', sans-serif; }
+        .select-btn.active { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(56, 189, 248, 0.15); box-shadow: 0 0 10px rgba(56, 189, 248, 0.25); }
+
         /* ERLC MAP CONTAINER */
         .map-wrapper { position: relative; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--neon-blue); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); background: #000; }
-        .map-img { width: 100%; height: auto; display: block; opacity: 0.85; transition: opacity 0.3s; }
-        .map-wrapper:hover .map-img { opacity: 1; }
+        .map-img { width: 100%; height: auto; display: block; opacity: 0.9; }
         
-        /* MAP OVERLAY BUTTONS (GRID POINTS) */
         .map-pin {
             position: absolute;
             transform: translate(-50%, -50%);
-            background: rgba(2, 6, 23, 0.85);
+            background: rgba(2, 6, 23, 0.9);
             border: 1px solid var(--neon-gold);
             color: var(--neon-gold);
             padding: 4px 8px;
@@ -92,10 +105,8 @@
             box-shadow: 0 0 12px var(--neon-blue);
         }
 
-        /* SELECTORS */
-        .grid-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
-        .select-btn { padding: 10px 4px; background: #020617; border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-sub); font-size: 0.72rem; font-weight: bold; cursor: pointer; text-align: center; font-family: 'Chakra Petch', sans-serif; }
-        .select-btn.active { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(56, 189, 248, 0.15); box-shadow: 0 0 10px rgba(56, 189, 248, 0.25); }
+        /* EMERGENCY PANIC */
+        .btn-panic { width: 100%; padding: 16px; background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; border: none; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(244, 63, 94, 0.4); font-family: 'Chakra Petch', sans-serif; }
 
         /* VOICE CARD */
         .voice-card { background: #020617; border: 1px dashed var(--neon-blue); border-radius: 14px; padding: 18px; text-align: center; }
@@ -105,19 +116,28 @@
 
         .voice-text-preview { background: #0f172a; border: 1px solid var(--panel-border); padding: 12px; border-radius: 10px; font-size: 0.85rem; min-height: 45px; color: #fff; margin: 12px 0; text-align: left; }
 
-        /* BUTTONS */
-        .btn-panic { width: 100%; padding: 16px; background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; border: none; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(244, 63, 94, 0.4); font-family: 'Chakra Petch', sans-serif; }
+        /* RAPID DISPATCH */
         .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .btn-quick { background: #020617; border: 1px solid var(--panel-border); color: #fff; padding: 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+
+        /* INPUTS & UNITS */
+        .input-dark { width: 100%; padding: 12px; background: #020617; border: 1px solid var(--panel-border); border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none; margin-bottom: 10px; }
+        .btn-action-sm { width: 100%; padding: 10px; background: var(--neon-blue); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; font-family: 'Chakra Petch', sans-serif; }
+
+        .unit-list { max-height: 200px; overflow-y: auto; }
+        .unit-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--panel-border); font-size: 0.85rem; }
+        .st-badge { padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; font-family: 'Share Tech Mono', monospace; }
+        .st-10-8 { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid var(--neon-green); }
+        .st-10-6 { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid var(--neon-red); }
+        .st-10-23 { background: rgba(251, 191, 36, 0.2); color: #fde047; border: 1px solid var(--neon-gold); }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN SCREEN -->
     <div id="login-screen">
         <div class="login-box">
             <i class="fa-solid fa-shield-cat"></i>
-            <h2>BCPD V6 ERLC CAD</h2>
+            <h2>BCPD V6 ULTRA</h2>
             <p>ENTER POLICE PASSCODE TO ACCESS</p>
             <div class="field-group">
                 <label>OFFICER PIN CODE</label>
@@ -127,14 +147,12 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
     <div id="main-dashboard" style="display: none;">
         
-        <!-- HEADER -->
         <div class="header-nav">
             <div class="logo-section">
-                <h1><i class="fa-solid fa-map-location-dot" style="color:var(--neon-blue);"></i> BCPD V6 TACTICAL</h1>
-                <span>ER:LC MAP & DISPATCH SYSTEM</span>
+                <h1><i class="fa-solid fa-tower-broadcast" style="color:var(--neon-blue);"></i> BCPD V6 ULTRA</h1>
+                <span>ER:LC DISPATCH & CAD SYSTEM</span>
             </div>
             <div class="officer-badge">
                 <div id="user-cs" style="color:#fff; font-weight:bold;">OFFICER</div>
@@ -143,7 +161,13 @@
             </div>
         </div>
 
-        <!-- RADIO CHANNELS -->
+        <div class="status-bar-auto">
+            <div class="status-indicator" id="status-display">
+                <span class="dot active"></span> <span id="status-text" style="color:var(--neon-green);">10-8 ON DUTY</span>
+            </div>
+            <div class="shift-timer" id="shift-timer"><i class="fa-regular fa-clock"></i> 00:00:00</div>
+        </div>
+
         <div style="font-size: 0.7rem; color: var(--neon-blue); font-weight: bold; margin-bottom: 4px;"><i class="fa-solid fa-tower-cell"></i> CHOOSE RADIO CHANNEL</div>
         <div class="grid-selector">
             <div class="select-btn active" id="ch-btn-1" onclick="setChannel(this, 'CH-1 สายตรวจหลัก')">CH-1 สายตรวจ</div>
@@ -152,33 +176,28 @@
             <div class="select-btn" id="ch-btn-4" onclick="setChannel(this, 'CH-4 บัญชาการ')">CH-4 บัญชาการ</div>
         </div>
 
-        <!-- ERLC MAP DISPATCH PANEL -->
         <div class="panel-box">
             <div class="panel-head">
                 <h3><i class="fa-solid fa-map" style="color: var(--neon-gold);"></i> ERLC TACTICAL MAP (แตะหมุดเพื่อเลือกตำแหน่ง)</h3>
             </div>
             <div class="map-wrapper">
-                <!-- ERLC Map Image -->
                 <img src="https://erlc-hub.pages.dev/map.png" class="map-img" alt="ERLC Map" onerror="this.src='https://i.imgur.com/39J2N5F.jpeg'">
                 
-                <!-- Map Interactive Pins -->
                 <button class="map-pin active" style="top: 75%; left: 35%;" onclick="selectMapPin(this, 'River City (Downtown)')"><i class="fa-solid fa-city"></i> Downtown</button>
                 <button class="map-pin" style="top: 25%; left: 30%;" onclick="selectMapPin(this, 'Residential / Suburbs')"><i class="fa-solid fa-house"></i> Residential</button>
                 <button class="map-pin" style="top: 20%; left: 75%;" onclick="selectMapPin(this, 'Liberty Highway / Expressway')"><i class="fa-solid fa-road"></i> Highway</button>
-                <button class="map-pin" style="top: 50%; left: 70%;" onclick="selectMapPin(this, 'Industrial / Farm Zone')"><i class="fa-solid fa-industry"></i> Industrial</button>
-                <button class="map-pin" style="top: 70%; left: 85%;" onclick="selectMapPin(this, 'Mountain / Offroad Trail')"><i class="fa-solid fa-mountain"></i> Mountain Trail</button>
+                <button class="map-pin" style="top: 50%; left: 70%;" onclick="selectMapPin(this, 'Industrial Zone')"><i class="fa-solid fa-industry"></i> Industrial</button>
+                <button class="map-pin" style="top: 70%; left: 85%;" onclick="selectMapPin(this, 'Mountain Trail')"><i class="fa-solid fa-mountain"></i> Mountain</button>
             </div>
             <div style="margin-top: 10px; font-size: 0.8rem; color: var(--neon-cyan); font-weight: bold;">
                 📍 ตำแหน่งที่เลือก: <span id="selected-map-location" style="color: #fff;">River City (Downtown)</span>
             </div>
         </div>
 
-        <!-- EMERGENCY PANIC -->
         <button class="btn-panic" onclick="sendPanicAlert()">
             <i class="fa-solid fa-triangle-exclamation"></i> 🚨 EMERGENCY PANIC (SOS) [Shift + S]
         </button>
 
-        <!-- VOICE RADIO DISPATCH -->
         <div class="panel-box">
             <div class="panel-head">
                 <h3><i class="fa-solid fa-microphone-lines" style="color: var(--neon-blue);"></i> VOICE RADIO DISPATCH</h3>
@@ -195,7 +214,6 @@
             </div>
         </div>
 
-        <!-- RAPID DISPATCH -->
         <div class="panel-box">
             <div class="panel-head">
                 <h3><i class="fa-solid fa-bolt-lightning" style="color: var(--neon-gold);"></i> RAPID DISPATCH (1-CLICK)</h3>
@@ -208,6 +226,29 @@
             </div>
         </div>
 
+        <div class="panel-box">
+            <div class="panel-head">
+                <h3><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--neon-cyan);"></i> BOLO & DATABASE SEARCH</h3>
+            </div>
+            <input type="text" id="search-query" class="input-dark" placeholder="พิมพ์ชื่อคนร้าย / เลขทะเบียนรถ / ประกาศจับ BOLO...">
+            <button class="btn-action-sm" onclick="searchDatabase()"><i class="fa-solid fa-search"></i> ส่งประกาศ BOLO เข้า Discord</button>
+        </div>
+
+        <div class="panel-box">
+            <div class="panel-head">
+                <h3><i class="fa-solid fa-book-bookmark" style="color: var(--neon-green);"></i> PATROL SHIFT LOG</h3>
+            </div>
+            <input type="text" id="patrol-log-input" class="input-dark" placeholder="บันทึกเหตุการณ์ประจำกะ...">
+            <button class="btn-action-sm" style="background:var(--neon-green);" onclick="savePatrolLog()"><i class="fa-solid fa-floppy-disk"></i> บันทึก SHIFT LOG</button>
+        </div>
+
+        <div class="panel-box">
+            <div class="panel-head">
+                <h3><i class="fa-solid fa-users-viewfinder" style="color:var(--neon-blue);"></i> ACTIVE UNITS ON DUTY (ลูกข่ายในระบบ)</h3>
+            </div>
+            <div class="unit-list" id="unit-rows">กำลังดึงข้อมูลกำลังพล...</div>
+        </div>
+
     </div>
 
     <script>
@@ -218,6 +259,7 @@
         let currentUser = null;
         let currentChannel = 'CH-1 สายตรวจหลัก';
         let currentLocation = 'River City (Downtown)';
+        let shiftStartTime = Date.now();
         let isRecording = false;
         let recognition;
 
@@ -259,7 +301,7 @@
 
                 if(foundUser) {
                     currentUser = foundUser;
-                    localStorage.setItem('bcpd_sec_user_v6', JSON.stringify(currentUser));
+                    localStorage.setItem('bcpd_sec_user_v6_full', JSON.stringify(currentUser));
                     initDashboard();
                 } else {
                     alert('❌ รหัสผ่านไม่ถูกต้อง!');
@@ -270,7 +312,7 @@
         }
 
         function logout() {
-            localStorage.removeItem('bcpd_sec_user_v6');
+            localStorage.removeItem('bcpd_sec_user_v6_full');
             location.reload();
         }
 
@@ -279,7 +321,20 @@
             document.getElementById('main-dashboard').style.display = 'block';
             document.getElementById('user-cs').innerText = `${currentUser.callsign} (${currentUser.name})`;
             document.getElementById('user-rank').innerText = currentUser.rank;
+
+            startShiftTimer();
+            startAutoSync();
             setupHotkeys();
+        }
+
+        function startShiftTimer() {
+            setInterval(() => {
+                const diff = Math.floor((Date.now() - shiftStartTime) / 1000);
+                const hrs = String(Math.floor(diff / 3600)).padStart(2, '0');
+                const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+                const secs = String(diff % 60).padStart(2, '0');
+                document.getElementById('shift-timer').innerHTML = `<i class="fa-regular fa-clock"></i> ${hrs}:${mins}:${secs}`;
+            }, 1000);
         }
 
         function setupHotkeys() {
@@ -293,6 +348,32 @@
                 if(e.code === 'Space' && isRecording) { e.preventDefault(); toggleVoice(); }
             });
         }
+
+        // SYNC UNITS (ระบบแสดงลูกข่าย)
+        async function syncUnits() {
+            try {
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
+                const txt = await res.text();
+                const jsonText = txt.substring(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
+                const json = JSON.parse(jsonText);
+
+                let html = '';
+                json.table.rows.forEach((row, idx) => {
+                    if(idx === 0 || !row.c) return;
+                    const cs = row.c[0] ? String(row.c[0].v || '-') : '-';
+                    const nm = row.c[1] ? String(row.c[1].v || '-') : '-';
+                    const st = row.c[2] ? String(row.c[2].v || '10-8') : '10-8';
+                    
+                    if(cs !== '-' && cs !== 'Callsign') {
+                        let stClass = st.includes('10-8') ? 'st-10-8' : (st.includes('10-6') ? 'st-10-6' : 'st-10-23');
+                        html += `<div class="unit-item"><div><b>${cs}</b> ${nm}</div><span class="st-badge ${stClass}">${st}</span></div>`;
+                    }
+                });
+                document.getElementById('unit-rows').innerHTML = html || 'ไม่มีข้อมูลกำลังพล';
+            } catch(e){}
+        }
+
+        function startAutoSync() { syncUnits(); setInterval(syncUnits, 4000); }
 
         // SPEECH RECOGNITION
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -338,7 +419,7 @@
                         color: 3801080,
                         fields: [
                             { name: "📢 ข้อความวิทยุ", value: `\`\`\`${text}\`\`\`` },
-                            { name: "🗺️ พิกัดบนแผนที่ ERLC", value: currentLocation, inline: true },
+                            { name: "🗺️ พิกัดแผนที่ ERLC", value: currentLocation, inline: true },
                             { name: "👮 ผู้สั่งการ", value: `${currentUser.callsign} (${currentUser.name})`, inline: true }
                         ],
                         image: { url: ERLC_MAP_IMAGE_URL },
@@ -346,7 +427,7 @@
                     }]
                 })
             });
-            alert('🚀 ส่งวิทยุพร้อมพิกัดแผนที่ ERLC เข้า Discord เรียบร้อย!');
+            alert('🚀 ส่งวิทยุเสียงพร้อมพิกัดเข้า Discord เรียบร้อย!');
             document.getElementById('voice-result').innerText = 'รอรับเสียงพูด...';
         }
 
@@ -370,7 +451,7 @@
                     }]
                 })
             });
-            alert('🚀 แจ้งเหตุพร้อมพิกัดเข้า Discord เรียบร้อย!');
+            alert('🚀 แจ้งเหตุเข้า Discord เรียบร้อย!');
         }
 
         async function sendPanicAlert() {
@@ -385,7 +466,7 @@
                         color: 16007990,
                         fields: [
                             { name: "👮 ผู้ประสบเหตุ", value: `${currentUser.callsign} | ${currentUser.name}` },
-                            { name: "📍 พิกัดบนแผนที่ ERLC", value: currentLocation, inline: true }
+                            { name: "📍 พิกัดแผนที่ ERLC", value: currentLocation, inline: true }
                         ],
                         image: { url: ERLC_MAP_IMAGE_URL },
                         timestamp: new Date()
@@ -395,7 +476,57 @@
             alert('🚨 ส่งสัญญาณ SOS เข้า Discord เรียบร้อย!');
         }
 
-        const savedUser = localStorage.getItem('bcpd_sec_user_v6');
+        async function searchDatabase() {
+            const q = document.getElementById('search-query').value.trim();
+            if(!q) return alert('กรุณากรอกข้อมูล BOLO!');
+
+            await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: "BCPD BOLO & Database",
+                    embeds: [{
+                        title: "🔍 [BOLO / DATABASE LOOKUP]",
+                        color: 43775,
+                        fields: [
+                            { name: "🔎 รายการ BOLO", value: `\`${q}\`` },
+                            { name: "📍 โซนที่พบเห็น", value: currentLocation, inline: true },
+                            { name: "👮 ร้องขอโดย", value: `${currentUser.callsign} (${currentUser.name})`, inline: true }
+                        ],
+                        timestamp: new Date()
+                    }]
+                })
+            });
+            alert('🔍 ส่งประกาศ BOLO เข้า Discord เรียบร้อย!');
+            document.getElementById('search-query').value = '';
+        }
+
+        async function savePatrolLog() {
+            const logText = document.getElementById('patrol-log-input').value.trim();
+            if(!logText) return alert('กรุณากรอกข้อความ Log!');
+
+            await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: "BCPD Shift Logger",
+                    embeds: [{
+                        title: "📝 [SHIFT LOG] บันทึกประจำกะ",
+                        color: 1095793,
+                        fields: [
+                            { name: "📌 บันทึก", value: logText },
+                            { name: "📍 โซนพื้นที่", value: currentLocation, inline: true },
+                            { name: "👮 บันทึกโดย", value: `${currentUser.callsign} (${currentUser.name})`, inline: true }
+                        ],
+                        timestamp: new Date()
+                    }]
+                })
+            });
+            alert('📝 บันทึก Shift Log เรียบร้อย!');
+            document.getElementById('patrol-log-input').value = '';
+        }
+
+        const savedUser = localStorage.getItem('bcpd_sec_user_v6_full');
         if(savedUser) {
             currentUser = JSON.parse(savedUser);
             initDashboard();
