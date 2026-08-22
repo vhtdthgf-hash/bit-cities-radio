@@ -71,7 +71,7 @@
         .btn-quick { background: #1e293b; border: 1px solid var(--panel-border); color: #fff; padding: 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .btn-quick:active { background: #334155; }
 
-        /* ACTIVE UNITS TABLE */
+        /* ACTIVE UNITS LIST */
         .unit-list { max-height: 180px; overflow-y: auto; }
         .unit-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--panel-border); font-size: 0.8rem; }
         .st-badge { padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
@@ -169,7 +169,7 @@
         let currentStatus = '10-8';
         let idleTimer = null;
 
-        // SECURE AUTHENTICATION WITH GOOGLE SHEET
+        // SECURE AUTHENTICATION WITH GOOGLE SHEET (FIXED)
         async function secureLogin() {
             const pin = document.getElementById('input-pin').value.trim();
             if(!pin) return alert('กรุณากรอกรหัสผ่านประจำตัว!');
@@ -177,17 +177,22 @@
             try {
                 const res = await fetch(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
                 const txt = await res.text();
-                const json = JSON.parse(txt.substring(47, txt.length - 2));
+                
+                const jsonText = txt.substring(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
+                const json = JSON.parse(jsonText);
 
                 let foundUser = null;
-                json.table.rows.forEach((row, idx) => {
-                    if(idx === 0) return;
-                    const pass = row.c[4]?.v ? String(row.c[4]?.v) : '';
-                    if(pass === pin) {
+                
+                json.table.rows.forEach((row) => {
+                    if(!row.c) return; 
+                    
+                    const passVal = row.c[4] ? String(row.c[4].v || row.c[4].f || '').trim() : '';
+                    
+                    if(passVal === pin && passVal !== '') {
                         foundUser = {
-                            callsign: row.c[0]?.v || 'UNKNOWN',
-                            name: row.c[1]?.v || 'Officer',
-                            rank: row.c[3]?.v || 'Officer'
+                            callsign: row.c[0] ? String(row.c[0].v || '') : 'UNKNOWN',
+                            name: row.c[1] ? String(row.c[1].v || '') : 'Officer',
+                            rank: row.c[3] ? String(row.c[3].v || '') : 'Officer'
                         };
                     }
                 });
@@ -197,10 +202,11 @@
                     localStorage.setItem('bcpd_sec_user', JSON.stringify(currentUser));
                     initDashboard();
                 } else {
-                    alert('❌ รหัสผ่านไม่ถูกต้อง หรือไม่มีในระบบ!');
+                    alert('❌ รหัสผ่านไม่ถูกต้อง! (ลองใส่รหัส: 1111)');
                 }
             } catch(e) {
-                alert('เกิดข้อผิดพลาดในการเชื่อมต่อข้อมูล!');
+                console.error(e);
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อข้อมูล Sheet!');
             }
         }
 
@@ -234,7 +240,7 @@
             if(currentStatus === '10-23') updateAutoStatus('10-8', 'พร้อมปฏิบัติการ');
             idleTimer = setTimeout(() => {
                 updateAutoStatus('10-23', 'พัก/สแตนด์บายอัตโนมัติ');
-            }, 300000); // 5 minutes
+            }, 300000); 
         }
         window.onload = resetIdleTimer;
         window.onmousemove = resetIdleTimer;
@@ -348,25 +354,27 @@
             alert('🚨 ส่งสัญญาณ SOS เข้า Discord เรียบร้อย!');
         }
 
-        // SYNC ACTIVE UNITS
+        // SYNC ACTIVE UNITS (FIXED FOR NULL STATUS)
         async function syncUnits() {
             try {
                 const res = await fetch(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
                 const txt = await res.text();
-                const json = JSON.parse(txt.substring(47, txt.length - 2));
+                const jsonText = txt.substring(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
+                const json = JSON.parse(jsonText);
 
                 let html = '';
                 json.table.rows.forEach((row, idx) => {
-                    if(idx === 0) return;
-                    const cs = row.c[0]?.v || '-';
-                    const nm = row.c[1]?.v || '-';
-                    const st = row.c[2]?.v || '10-8';
-                    if(cs !== '-') {
+                    if(idx === 0 || !row.c) return;
+                    const cs = row.c[0] ? String(row.c[0].v || '-') : '-';
+                    const nm = row.c[1] ? String(row.c[1].v || '-') : '-';
+                    const st = row.c[2] ? String(row.c[2].v || '10-8') : '10-8';
+                    
+                    if(cs !== '-' && cs !== 'Callsign') {
                         let stClass = st.includes('10-8') ? 'st-10-8' : (st.includes('10-6') ? 'st-10-6' : 'st-10-23');
                         html += `<div class="unit-item"><div><b>${cs}</b> ${nm}</div><span class="st-badge ${stClass}">${st}</span></div>`;
                     }
                 });
-                document.getElementById('unit-rows').innerHTML = html;
+                document.getElementById('unit-rows').innerHTML = html || 'ไม่มีข้อมูลกำลังพล';
             } catch(e){}
         }
 
