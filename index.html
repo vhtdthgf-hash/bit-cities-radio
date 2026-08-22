@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BCPD ULTRA CAD V4 - Tactical Command System</title>
+    <title>BCPD V5 SUPREME - Tactical Dispatch & Radio</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Sarabun:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-main: #030712;
-            --panel-bg: rgba(15, 23, 42, 0.85);
+            --panel-bg: rgba(15, 23, 42, 0.9);
             --panel-border: #1e293b;
             --neon-blue: #38bdf8;
             --neon-cyan: #06b6d4;
@@ -27,12 +27,12 @@
             color: var(--text-main); 
             font-family: 'Sarabun', 'Chakra Petch', sans-serif; 
             padding: 12px; 
-            max-width: 680px; 
+            max-width: 720px; 
             margin: 0 auto; 
             min-height: 100vh;
         }
 
-        /* LOGIN SCREEN */
+        /* AUTH LOGIN */
         #login-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 20px; }
         .login-box { 
             background: var(--panel-bg); 
@@ -42,8 +42,8 @@
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2); 
-            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.25); 
+            backdrop-filter: blur(12px);
         }
         .login-box i { font-size: 3.5rem; color: var(--neon-gold); margin-bottom: 12px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
         .login-box h2 { font-family: 'Chakra Petch', sans-serif; font-size: 1.6rem; letter-spacing: 1px; color: #fff; }
@@ -51,22 +51,20 @@
         .field-group { text-align: left; margin-bottom: 18px; }
         .field-group label { display: block; font-size: 0.75rem; color: var(--neon-blue); margin-bottom: 6px; font-weight: 700; letter-spacing: 1px; }
         .field-group input { width: 100%; padding: 14px; background: #020617; border: 1px solid var(--panel-border); border-radius: 12px; color: #fff; outline: none; font-size: 1.1rem; text-align: center; letter-spacing: 3px; font-family: 'Share Tech Mono', monospace; }
-        .field-group input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
-        .btn-submit-login { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); color: #000; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; font-family: 'Chakra Petch', sans-serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
-        .btn-submit-login:active { transform: scale(0.98); }
+        .btn-submit-login { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); color: #000; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; font-family: 'Chakra Petch', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
 
         /* DASHBOARD LAYOUT */
-        .header-nav { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--panel-border); margin-bottom: 12px; backdrop-filter: blur(8px); }
-        .logo-section h1 { font-family: 'Chakra Petch', sans-serif; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .header-nav { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); padding: 14px 18px; border-radius: 16px; border: 1px solid var(--panel-border); margin-bottom: 12px; backdrop-filter: blur(8px); }
+        .logo-section h1 { font-family: 'Chakra Petch', sans-serif; font-size: 1.2rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
         .logo-section span { font-size: 0.65rem; color: var(--neon-cyan); font-family: 'Share Tech Mono', monospace; display: block; letter-spacing: 1px; }
-        .officer-badge { background: rgba(56, 189, 248, 0.1); border: 1px solid var(--neon-blue); padding: 6px 12px; border-radius: 12px; font-size: 0.75rem; text-align: right; }
+        .officer-badge { background: rgba(56, 189, 248, 0.1); border: 1px solid var(--neon-blue); padding: 6px 14px; border-radius: 12px; font-size: 0.75rem; text-align: right; }
         .btn-logout { background: #1e293b; color: var(--neon-red); border: 1px solid var(--neon-red); padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; margin-top: 4px; cursor: pointer; font-weight: bold; }
 
         .panel-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 16px; margin-bottom: 12px; backdrop-filter: blur(8px); }
         .panel-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 12px; }
         .panel-head h3 { font-family: 'Chakra Petch', sans-serif; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* TACTICAL STATUS & COUNTERS */
+        /* TACTICAL STATUS */
         .status-bar-auto { display: flex; justify-content: space-between; align-items: center; background: #020617; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--panel-border); margin-bottom: 12px; }
         .status-indicator { font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
@@ -75,32 +73,29 @@
         .dot.idle { background: var(--neon-gold); box-shadow: 0 0 10px var(--neon-gold); }
         .shift-timer { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: var(--neon-gold); background: rgba(251, 191, 36, 0.1); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--neon-gold); }
 
-        /* RADIO CHANNELS & ZONES */
+        /* SELECTOR GRID */
         .grid-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
-        .select-btn { padding: 8px 4px; background: #020617; border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-sub); font-size: 0.7rem; font-weight: bold; cursor: pointer; text-align: center; font-family: 'Chakra Petch', sans-serif; transition: all 0.2s; }
-        .select-btn.active { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(56, 189, 248, 0.15); box-shadow: 0 0 8px rgba(56, 189, 248, 0.2); }
+        .select-btn { padding: 10px 4px; background: #020617; border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-sub); font-size: 0.72rem; font-weight: bold; cursor: pointer; text-align: center; font-family: 'Chakra Petch', sans-serif; transition: all 0.2s; }
+        .select-btn.active { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(56, 189, 248, 0.15); box-shadow: 0 0 10px rgba(56, 189, 248, 0.25); }
 
-        /* VOICE DISPATCH CARD */
-        .voice-card { background: #020617; border: 1px dashed var(--neon-blue); border-radius: 14px; padding: 16px; text-align: center; position: relative; }
-        .btn-mic { width: 75px; height: 75px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); color: #000; border: none; font-size: 2rem; cursor: pointer; box-shadow: 0 0 20px rgba(56, 189, 248, 0.4); margin: 10px auto; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .btn-mic:active { transform: scale(0.92); }
+        /* VOICE CARD & WAVE VISUALIZER */
+        .voice-card { background: #020617; border: 1px dashed var(--neon-blue); border-radius: 14px; padding: 18px; text-align: center; position: relative; }
+        .btn-mic { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); color: #000; border: none; font-size: 2.2rem; cursor: pointer; box-shadow: 0 0 20px rgba(56, 189, 248, 0.4); margin: 10px auto; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .btn-mic.recording { background: linear-gradient(135deg, #f43f5e, #991b1b); color: #fff; box-shadow: 0 0 25px rgba(244, 63, 94, 0.6); animation: pulse-mic 0.8s infinite; }
         @keyframes pulse-mic { 0% { scale: 1; } 50% { scale: 1.08; } 100% { scale: 1; } }
 
         .voice-text-preview { background: #0f172a; border: 1px solid var(--panel-border); padding: 12px; border-radius: 10px; font-size: 0.85rem; min-height: 48px; color: #fff; margin: 12px 0; word-break: break-word; text-align: left; }
+        .hotkey-hint { font-size: 0.68rem; color: var(--text-sub); margin-top: 4px; font-family: 'Share Tech Mono', monospace; }
 
-        /* SOS PANIC BUTTON */
-        .btn-panic { width: 100%; padding: 16px; background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; border: none; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(244, 63, 94, 0.4); font-family: 'Chakra Petch', sans-serif; letter-spacing: 1px; transition: transform 0.1s; }
-        .btn-panic:active { transform: scale(0.97); }
+        /* EMERGENCY PANIC */
+        .btn-panic { width: 100%; padding: 16px; background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; border: none; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(244, 63, 94, 0.4); font-family: 'Chakra Petch', sans-serif; letter-spacing: 1px; }
 
-        /* DISPATCH BUTTONS GRID */
+        /* DISPATCH GRID */
         .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .btn-quick { background: #020617; border: 1px solid var(--panel-border); color: #fff; padding: 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; }
-        .btn-quick:active { background: #1e293b; border-color: var(--neon-blue); }
+        .btn-quick { background: #020617; border: 1px solid var(--panel-border); color: #fff; padding: 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 
-        /* BOLO & LOG INPUTS */
+        /* INPUTS */
         .input-dark { width: 100%; padding: 12px; background: #020617; border: 1px solid var(--panel-border); border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none; margin-bottom: 10px; }
-        .input-dark:focus { border-color: var(--neon-gold); }
         .btn-action-sm { width: 100%; padding: 10px; background: var(--neon-blue); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; font-family: 'Chakra Petch', sans-serif; }
 
         /* UNITS LIST */
@@ -111,7 +106,6 @@
         .st-10-6 { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid var(--neon-red); }
         .st-10-23 { background: rgba(251, 191, 36, 0.2); color: #fde047; border: 1px solid var(--neon-gold); }
 
-        /* COOLDOWN OVERLAY BANNER */
         #cooldown-banner { display: none; background: rgba(244, 63, 94, 0.9); color: #fff; text-align: center; padding: 6px; font-size: 0.75rem; border-radius: 8px; font-weight: bold; margin-bottom: 10px; }
     </style>
 </head>
@@ -121,7 +115,7 @@
     <div id="login-screen">
         <div class="login-box">
             <i class="fa-solid fa-shield-cat"></i>
-            <h2>BCPD ULTRA CAD</h2>
+            <h2>BCPD V5 SUPREME</h2>
             <p>ENTER POLICE PASSCODE TO ACCESS</p>
             <div class="field-group">
                 <label><i class="fa-solid fa-lock"></i> OFFICER PIN CODE</label>
@@ -131,14 +125,14 @@
         </div>
     </div>
 
-    <!-- MAIN DISPATCH DASHBOARD -->
+    <!-- MAIN DASHBOARD -->
     <div id="main-dashboard" style="display: none;">
         
         <!-- HEADER -->
         <div class="header-nav">
             <div class="logo-section">
-                <h1><i class="fa-solid fa-satellite-dish" style="color:var(--neon-blue);"></i> BCPD ULTRA V4</h1>
-                <span>TACTICAL COMMAND & CAD</span>
+                <h1><i class="fa-solid fa-tower-broadcast" style="color:var(--neon-blue);"></i> BCPD V5 SUPREME</h1>
+                <span>TACTICAL RADIO & DISPATCH</span>
             </div>
             <div class="officer-badge">
                 <div id="user-cs" style="color:#fff; font-weight:bold;">OFFICER</div>
@@ -147,7 +141,6 @@
             </div>
         </div>
 
-        <!-- COOLDOWN BANNER -->
         <div id="cooldown-banner"><i class="fa-solid fa-hourglass-half"></i> RATE LIMIT PROTECTOR: รอ 3 วินาทีก่อนส่งใหม่...</div>
 
         <!-- STATUS BAR & TIMER -->
@@ -158,27 +151,27 @@
             <div class="shift-timer" id="shift-timer"><i class="fa-regular fa-clock"></i> 00:00:00</div>
         </div>
 
-        <!-- RADIO CHANNEL SELECTOR -->
-        <div style="font-size: 0.7rem; color: var(--neon-blue); font-weight: bold; margin-bottom: 4px;"><i class="fa-solid fa-tower-cell"></i> CHOOSE RADIO CHANNEL</div>
+        <!-- RADIO CHANNELS -->
+        <div style="font-size: 0.7rem; color: var(--neon-blue); font-weight: bold; margin-bottom: 4px;"><i class="fa-solid fa-tower-cell"></i> CHOOSE RADIO CHANNEL (กด 1-4 ได้)</div>
         <div class="grid-selector">
-            <div class="select-btn active" onclick="setChannel(this, 'CH-1 สายตรวจหลัก')">CH-1 สายตรวจ</div>
-            <div class="select-btn" onclick="setChannel(this, 'CH-2 สืบสวน/สืบคดี')">CH-2 สืบสวน</div>
-            <div class="select-btn" onclick="setChannel(this, 'CH-3 จราจร/คุมพื้นที่')">CH-3 จราจร</div>
-            <div class="select-btn" onclick="setChannel(this, 'CH-4 บัญชาการ')">CH-4 บัญชาการ</div>
+            <div class="select-btn active" id="ch-btn-1" onclick="setChannel(this, 'CH-1 สายตรวจหลัก')">CH-1 สายตรวจ</div>
+            <div class="select-btn" id="ch-btn-2" onclick="setChannel(this, 'CH-2 สืบสวน/สืบคดี')">CH-2 สืบสวน</div>
+            <div class="select-btn" id="ch-btn-3" onclick="setChannel(this, 'CH-3 จราจร/คุมพื้นที่')">CH-3 จราจร</div>
+            <div class="select-btn" id="ch-btn-4" onclick="setChannel(this, 'CH-4 บัญชาการ')">CH-4 บัญชาการ</div>
         </div>
 
-        <!-- ZONE / PATROL AREA SELECTOR -->
+        <!-- PATROL ZONES -->
         <div style="font-size: 0.7rem; color: var(--neon-gold); font-weight: bold; margin-bottom: 4px;"><i class="fa-solid fa-map-pin"></i> PATROL ZONE / LOCATION</div>
         <div class="grid-selector">
-            <div class="select-btn active" onclick="setZone(this, 'Zone A (เมืองหลวง/Downtown)')">Zone A</div>
-            <div class="select-btn" onclick="setZone(this, 'Zone B (เขตก่อสร้าง/Industrial)')">Zone B</div>
-            <div class="select-btn" onclick="setZone(this, 'Zone C (ทางหลวง/Highway)')">Zone C</div>
-            <div class="select-btn" onclick="setZone(this, 'Zone D (ชานเมือง/Residential)')">Zone D</div>
+            <div class="select-btn active" onclick="setZone(this, 'Zone A (Downtown)')">Zone A</div>
+            <div class="select-btn" onclick="setZone(this, 'Zone B (Industrial)')">Zone B</div>
+            <div class="select-btn" onclick="setZone(this, 'Zone C (Highway)')">Zone C</div>
+            <div class="select-btn" onclick="setZone(this, 'Zone D (Residential)')">Zone D</div>
         </div>
 
-        <!-- EMERGENCY SOS PANIC -->
+        <!-- EMERGENCY PANIC -->
         <button class="btn-panic" onclick="sendPanicAlert()">
-            <i class="fa-solid fa-triangle-exclamation"></i> 🚨 EMERGENCY PANIC (SOS)
+            <i class="fa-solid fa-triangle-exclamation"></i> 🚨 EMERGENCY PANIC (SOS) [Shift + S]
         </button>
 
         <!-- VOICE RADIO DISPATCH -->
@@ -190,7 +183,8 @@
                 <button class="btn-mic" id="mic-btn" onclick="toggleVoice()">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
-                <p id="mic-status" style="font-size: 0.75rem; color: var(--neon-gold);">แตะปุ่มเพื่อพูดวิทยุสั่งการ</p>
+                <p id="mic-status" style="font-size: 0.75rem; color: var(--neon-gold);">แตะปุ่ม หรือกด [Spacebar] ค้างไว้เพื่อพูด</p>
+                <div class="hotkey-hint">⌨️ HOTKEY: Hold [Spacebar] to Talk | [Shift+S] Panic SOS</div>
                 <div class="voice-text-preview" id="voice-result">รอรับเสียงพูด...</div>
                 <button class="btn-submit-login" style="background: #5865F2; color: #fff; font-size: 0.85rem;" onclick="sendVoiceDiscord()">
                     <i class="fa-brands fa-discord"></i> TRANSMIT TO DISCORD
@@ -198,7 +192,7 @@
             </div>
         </div>
 
-        <!-- 1-CLICK QUICK DISPATCH -->
+        <!-- RAPID DISPATCH -->
         <div class="panel-box">
             <div class="panel-head">
                 <h3><i class="fa-solid fa-bolt-lightning" style="color: var(--neon-gold);"></i> RAPID DISPATCH (1-CLICK)</h3>
@@ -211,25 +205,24 @@
             </div>
         </div>
 
-        <!-- BOLO / LOOKUP TOOL -->
+        <!-- BOLO & LOGS -->
         <div class="panel-box">
             <div class="panel-head">
                 <h3><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--neon-cyan);"></i> BOLO & DATABASE SEARCH</h3>
             </div>
             <input type="text" id="search-query" class="input-dark" placeholder="พิมพ์ชื่อคนร้าย / เลขทะเบียนรถ / ประกาศจับ BOLO...">
-            <button class="btn-action-sm" onclick="searchDatabase()"><i class="fa-solid fa-search"></i> ส่งประกาศ BOLO / เช็กประวัติเข้าข่าย</button>
+            <button class="btn-action-sm" onclick="searchDatabase()"><i class="fa-solid fa-search"></i> ส่งประกาศ BOLO เข้า Discord</button>
         </div>
 
-        <!-- PATROL LOG MEMO -->
         <div class="panel-box">
             <div class="panel-head">
                 <h3><i class="fa-solid fa-book-bookmark" style="color: var(--neon-green);"></i> PATROL SHIFT LOG</h3>
             </div>
-            <input type="text" id="patrol-log-input" class="input-dark" placeholder="บันทึกสรุปเหตุการณ์ เช่น 'จับกุมผู้ต้องหา 1 ราย ส่งสถานีตำรวจ'">
+            <input type="text" id="patrol-log-input" class="input-dark" placeholder="บันทึกเหตุการณ์ประจำกะ...">
             <button class="btn-action-sm" style="background:var(--neon-green);" onclick="savePatrolLog()"><i class="fa-solid fa-floppy-disk"></i> บันทึก SHIFT LOG</button>
         </div>
 
-        <!-- ACTIVE UNITS REAL-TIME LIST -->
+        <!-- UNITS LIST -->
         <div class="panel-box">
             <div class="panel-head">
                 <h3><i class="fa-solid fa-users-viewfinder"></i> ACTIVE UNITS ON DUTY</h3>
@@ -246,12 +239,12 @@
         let currentUser = null;
         let currentStatus = '10-8';
         let currentChannel = 'CH-1 สายตรวจหลัก';
-        let currentZone = 'Zone A (เมืองหลวง/Downtown)';
+        let currentZone = 'Zone A (Downtown)';
         let idleTimer = null;
         let shiftStartTime = Date.now();
         let isCooldown = false;
 
-        // ADVANCED AUDIO SYNTHESIZER
+        // REALISTIC RADIO AUDIO SYNTHESIZER
         function playSound(type) {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -264,10 +257,15 @@
                     osc.type = 'sine'; osc.frequency.value = 900;
                     gain.gain.setValueAtTime(0.08, ctx.currentTime);
                     osc.start(); osc.stop(ctx.currentTime + 0.08);
-                } else if(type === 'radio') {
-                    osc.type = 'square'; osc.frequency.value = 1200;
+                } else if(type === 'radio_open') {
+                    osc.type = 'square'; osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    osc.frequency.setValueAtTime(1200, ctx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    osc.start(); osc.stop(ctx.currentTime + 0.12);
+                } else if(type === 'radio_close') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(600, ctx.currentTime);
                     gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                    osc.start(); osc.stop(ctx.currentTime + 0.15);
+                    osc.start(); osc.stop(ctx.currentTime + 0.1);
                 } else if(type === 'panic') {
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(500, ctx.currentTime);
@@ -278,7 +276,6 @@
             } catch(e){}
         }
 
-        // ANTI-SPAM COOLDOWN CONTROLLER
         function triggerCooldown() {
             isCooldown = true;
             document.getElementById('cooldown-banner').style.display = 'block';
@@ -315,7 +312,7 @@
 
                 if(foundUser) {
                     currentUser = foundUser;
-                    localStorage.setItem('bcpd_sec_user_v4', JSON.stringify(currentUser));
+                    localStorage.setItem('bcpd_sec_user_v5', JSON.stringify(currentUser));
                     initDashboard();
                 } else {
                     alert('❌ รหัสผ่านไม่ถูกต้อง!');
@@ -327,7 +324,7 @@
 
         function logout() {
             playSound('click');
-            localStorage.removeItem('bcpd_sec_user_v4');
+            localStorage.removeItem('bcpd_sec_user_v5');
             location.reload();
         }
 
@@ -341,9 +338,41 @@
             resetIdleTimer();
             startAutoSync();
             startShiftTimer();
+            setupHotkeys();
         }
 
-        // TIMER TRACKER
+        // KEYBOARD HOTKEYS BINDINGS
+        function setupHotkeys() {
+            window.addEventListener('keydown', (e) => {
+                if(e.target.tagName === 'INPUT') return; // ไม่ทำงานขณะพิมพ์ตัวหนังสือ
+
+                if(e.code === 'Space' && !isRecording) {
+                    e.preventDefault();
+                    toggleVoice();
+                } else if(e.shiftKey && e.code === 'KeyS') {
+                    e.preventDefault();
+                    sendPanicAlert();
+                } else if(e.code === 'Digit1') {
+                    document.getElementById('ch-btn-1').click();
+                } else if(e.code === 'Digit2') {
+                    document.getElementById('ch-btn-2').click();
+                } else if(e.code === 'Digit3') {
+                    document.getElementById('ch-btn-3').click();
+                } else if(e.code === 'Digit4') {
+                    document.getElementById('ch-btn-4').click();
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if(e.target.tagName === 'INPUT') return;
+                if(e.code === 'Space' && isRecording) {
+                    e.preventDefault();
+                    toggleVoice();
+                }
+            });
+        }
+
+        // SHIFT TIMER
         function startShiftTimer() {
             setInterval(() => {
                 const diff = Math.floor((Date.now() - shiftStartTime) / 1000);
@@ -354,7 +383,6 @@
             }, 1000);
         }
 
-        // SELECTORS
         function setChannel(btn, chName) {
             playSound('click');
             btn.parentElement.querySelectorAll('.select-btn').forEach(b => b.classList.remove('active'));
@@ -369,7 +397,6 @@
             currentZone = zName;
         }
 
-        // STATUS CONTROLLER
         function updateAutoStatus(code, label) {
             currentStatus = code;
             const display = document.getElementById('status-display');
@@ -405,10 +432,10 @@
             recognition.interimResults = true;
 
             recognition.onstart = function() {
-                playSound('radio');
+                playSound('radio_open');
                 isRecording = true;
                 document.getElementById('mic-btn').classList.add('recording');
-                document.getElementById('mic-status').innerText = '🔴 กำลังดักจับเสียงพูด...';
+                document.getElementById('mic-status').innerText = '🔴 กำลังจับเสียงพูดวิทยุ...';
                 updateAutoStatus('10-6', 'กำลังใช้วิทยุสั่งการ');
             };
 
@@ -421,10 +448,10 @@
             };
 
             recognition.onend = function() {
-                playSound('radio');
+                playSound('radio_close');
                 isRecording = false;
                 document.getElementById('mic-btn').classList.remove('recording');
-                document.getElementById('mic-status').innerText = 'แตะปุ่มเพื่อพูดวิทยุสั่งการ';
+                document.getElementById('mic-status').innerText = 'แตะปุ่ม หรือกด [Spacebar] ค้างไว้เพื่อพูด';
             };
         }
 
@@ -433,10 +460,10 @@
             isRecording ? recognition.stop() : recognition.start();
         }
 
-        // DISCORD DISPATCH TRANSMITTER
+        // DISCORD TRANSMITTER
         async function sendVoiceDiscord() {
             if(isCooldown) return alert('⏳ กรุณารอ 3 วินาทีก่อนส่งข้อความถัดไป!');
-            playSound('radio');
+            playSound('radio_open');
             const text = document.getElementById('voice-result').innerText.trim();
             if(!text || text === 'รอรับเสียงพูด...') return alert('กรุณาพูดสั่งการก่อนส่ง!');
 
@@ -445,7 +472,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    username: "BCPD Voice Dispatcher",
+                    username: "BCPD Supreme Dispatcher",
                     embeds: [{
                         title: `🎙️ [VOICE DISPATCH] ${currentChannel}`,
                         color: 3801080,
@@ -501,7 +528,7 @@
                     content: "@everyone 🚨 **สัญญาณ SOS ขอความช่วยเหลือด่วนที่สุด!**",
                     username: "BCPD PANIC SYSTEM",
                     embeds: [{
-                        title: "🆘 [PANIC BUTTON] เจ้าหน้าที่ประสบบาตรเจ็บ/ต้องการกำลังเสริมด่วน!",
+                        title: "🆘 [PANIC BUTTON] เจ้าหน้าที่ขอความช่วยเหลือด่วน!",
                         color: 16007990,
                         fields: [
                             { name: "👮 ผู้ประสบเหตุ", value: `${currentUser.callsign} | ${currentUser.name}` },
@@ -539,7 +566,7 @@
                     }]
                 })
             });
-            alert('🔍 ส่ง BOLO / คำขอตรวจสอบเข้า Discord แล้ว!');
+            alert('🔍 ส่ง BOLO เข้า Discord แล้ว!');
             document.getElementById('search-query').value = '';
         }
 
@@ -571,7 +598,7 @@
             document.getElementById('patrol-log-input').value = '';
         }
 
-        // SYNC ACTIVE UNITS
+        // SYNC UNITS
         async function syncUnits() {
             try {
                 const res = await fetch(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
@@ -597,8 +624,7 @@
 
         function startAutoSync() { syncUnits(); setInterval(syncUnits, 4000); }
 
-        // CHECK SAVED SESSION
-        const savedUser = localStorage.getItem('bcpd_sec_user_v4');
+        const savedUser = localStorage.getItem('bcpd_sec_user_v5');
         if(savedUser) {
             currentUser = JSON.parse(savedUser);
             initDashboard();
