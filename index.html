@@ -1,9 +1,9 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BCPD V6 - ERLC TACTICAL DISPATCH</title>
+    <title>BCPD V6 ULTRA - CAD DISPATCH</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Sarabun:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
@@ -60,69 +60,26 @@
         .officer-badge { background: rgba(56, 189, 248, 0.1); border: 1px solid var(--neon-blue); padding: 6px 14px; border-radius: 12px; font-size: 0.75rem; text-align: right; }
         .btn-logout { background: #1e293b; color: var(--neon-red); border: 1px solid var(--neon-red); padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; margin-top: 4px; cursor: pointer; }
 
-        /* STATUS BAR & TIMER */
-        .status-bar-auto { display: flex; justify-content: space-between; align-items: center; background: #020617; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--panel-border); margin-bottom: 12px; }
-        .status-indicator { font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-        .dot.active { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
-        .dot.busy { background: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
-        .dot.idle { background: var(--neon-gold); box-shadow: 0 0 10px var(--neon-gold); }
-        .shift-timer { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: var(--neon-gold); background: rgba(251, 191, 36, 0.1); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--neon-gold); }
-
         /* PANEL BOX */
         .panel-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 16px; margin-bottom: 12px; backdrop-filter: blur(8px); }
         .panel-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 12px; }
         .panel-head h3 { font-family: 'Chakra Petch', sans-serif; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
 
-        /* SELECTORS */
-        .grid-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
-        .select-btn { padding: 10px 4px; background: #020617; border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-sub); font-size: 0.72rem; font-weight: bold; cursor: pointer; text-align: center; font-family: 'Chakra Petch', sans-serif; }
+        /* SELECTORS / ZONES */
+        .grid-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .select-btn { padding: 10px 4px; background: #020617; border: 1px solid var(--panel-border); border-radius: 8px; color: var(--text-sub); font-size: 0.75rem; font-weight: bold; cursor: pointer; text-align: center; font-family: 'Chakra Petch', sans-serif; }
         .select-btn.active { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(56, 189, 248, 0.15); box-shadow: 0 0 10px rgba(56, 189, 248, 0.25); }
 
-        /* ERLC MAP CONTAINER */
-        .map-wrapper { position: relative; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--neon-blue); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); background: #000; }
-        .map-img { width: 100%; height: auto; display: block; opacity: 0.9; }
+        /* INPUTS & SEARCH */
+        .input-dark { width: 100%; padding: 12px; background: #020617; border: 1px solid var(--panel-border); border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none; margin-bottom: 8px; }
+        .btn-action { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); color: #000; border: none; border-radius: 10px; font-weight: bold; font-size: 0.9rem; cursor: pointer; font-family: 'Chakra Petch', sans-serif; margin-top: 6px; }
         
-        .map-pin {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            background: rgba(2, 6, 23, 0.9);
-            border: 1px solid var(--neon-gold);
-            color: var(--neon-gold);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            cursor: pointer;
-            font-family: 'Chakra Petch', sans-serif;
-            box-shadow: 0 0 8px rgba(0,0,0,0.8);
-            transition: all 0.2s;
-        }
-        .map-pin:hover, .map-pin.active {
-            background: var(--neon-blue);
-            color: #000;
-            border-color: #fff;
-            box-shadow: 0 0 12px var(--neon-blue);
-        }
+        /* SUSPECT CARD */
+        .suspect-info-card { background: rgba(2, 6, 23, 0.8); border: 1px solid var(--neon-gold); border-radius: 10px; padding: 12px; font-size: 0.8rem; margin-top: 10px; display: none; }
+        .suspect-info-card p { margin-bottom: 4px; }
 
         /* EMERGENCY PANIC */
         .btn-panic { width: 100%; padding: 16px; background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; border: none; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(244, 63, 94, 0.4); font-family: 'Chakra Petch', sans-serif; }
-
-        /* VOICE CARD */
-        .voice-card { background: #020617; border: 1px dashed var(--neon-blue); border-radius: 14px; padding: 18px; text-align: center; }
-        .btn-mic { width: 75px; height: 75px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan)); color: #000; border: none; font-size: 2rem; cursor: pointer; box-shadow: 0 0 20px rgba(56, 189, 248, 0.4); margin: 10px auto; display: flex; align-items: center; justify-content: center; }
-        .btn-mic.recording { background: linear-gradient(135deg, #f43f5e, #991b1b); color: #fff; box-shadow: 0 0 25px rgba(244, 63, 94, 0.6); animation: pulse-mic 0.8s infinite; }
-        @keyframes pulse-mic { 0% { scale: 1; } 50% { scale: 1.08; } 100% { scale: 1; } }
-
-        .voice-text-preview { background: #0f172a; border: 1px solid var(--panel-border); padding: 12px; border-radius: 10px; font-size: 0.85rem; min-height: 45px; color: #fff; margin: 12px 0; text-align: left; }
-
-        /* RAPID DISPATCH */
-        .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .btn-quick { background: #020617; border: 1px solid var(--panel-border); color: #fff; padding: 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-
-        /* INPUTS & UNITS */
-        .input-dark { width: 100%; padding: 12px; background: #020617; border: 1px solid var(--panel-border); border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none; margin-bottom: 10px; }
-        .btn-action-sm { width: 100%; padding: 10px; background: var(--neon-blue); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; font-family: 'Chakra Petch', sans-serif; }
 
         .unit-list { max-height: 200px; overflow-y: auto; }
         .unit-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--panel-border); font-size: 0.85rem; }
@@ -137,7 +94,7 @@
     <div id="login-screen">
         <div class="login-box">
             <i class="fa-solid fa-shield-cat"></i>
-            <h2>BCPD V6 ULTRA</h2>
+            <h2>BCPD CAD DISPATCH</h2>
             <p>ENTER POLICE PASSCODE TO ACCESS</p>
             <div class="field-group">
                 <label>OFFICER PIN CODE</label>
@@ -151,46 +108,13 @@
         
         <div class="header-nav">
             <div class="logo-section">
-                <h1><i class="fa-solid fa-tower-broadcast" style="color:var(--neon-blue);"></i> BCPD V6 ULTRA</h1>
-                <span>ER:LC DISPATCH & CAD SYSTEM</span>
+                <h1><i class="fa-solid fa-tower-broadcast" style="color:var(--neon-blue);"></i> BCPD V6 DISPATCH</h1>
+                <span>ER:LC INCIDENT REPORT SYSTEM</span>
             </div>
             <div class="officer-badge">
                 <div id="user-cs" style="color:#fff; font-weight:bold;">OFFICER</div>
                 <div id="user-rank" style="font-size:0.65rem; color:var(--neon-blue);">RANK</div>
                 <button class="btn-logout" onclick="logout()">LOGOUT</button>
-            </div>
-        </div>
-
-        <div class="status-bar-auto">
-            <div class="status-indicator" id="status-display">
-                <span class="dot active"></span> <span id="status-text" style="color:var(--neon-green);">10-8 ON DUTY</span>
-            </div>
-            <div class="shift-timer" id="shift-timer"><i class="fa-regular fa-clock"></i> 00:00:00</div>
-        </div>
-
-        <div style="font-size: 0.7rem; color: var(--neon-blue); font-weight: bold; margin-bottom: 4px;"><i class="fa-solid fa-tower-cell"></i> CHOOSE RADIO CHANNEL</div>
-        <div class="grid-selector">
-            <div class="select-btn active" id="ch-btn-1" onclick="setChannel(this, 'CH-1 สายตรวจหลัก')">CH-1 สายตรวจ</div>
-            <div class="select-btn" id="ch-btn-2" onclick="setChannel(this, 'CH-2 สืบสวน')">CH-2 สืบสวน</div>
-            <div class="select-btn" id="ch-btn-3" onclick="setChannel(this, 'CH-3 จราจร')">CH-3 จราจร</div>
-            <div class="select-btn" id="ch-btn-4" onclick="setChannel(this, 'CH-4 บัญชาการ')">CH-4 บัญชาการ</div>
-        </div>
-
-        <div class="panel-box">
-            <div class="panel-head">
-                <h3><i class="fa-solid fa-map" style="color: var(--neon-gold);"></i> ERLC TACTICAL MAP (แตะหมุดเพื่อเลือกตำแหน่ง)</h3>
-            </div>
-            <div class="map-wrapper">
-                <img src="https://erlc-hub.pages.dev/map.png" class="map-img" alt="ERLC Map" onerror="this.src='https://i.imgur.com/39J2N5F.jpeg'">
-                
-                <button class="map-pin active" style="top: 75%; left: 35%;" onclick="selectMapPin(this, 'River City (Downtown)')"><i class="fa-solid fa-city"></i> Downtown</button>
-                <button class="map-pin" style="top: 25%; left: 30%;" onclick="selectMapPin(this, 'Residential / Suburbs')"><i class="fa-solid fa-house"></i> Residential</button>
-                <button class="map-pin" style="top: 20%; left: 75%;" onclick="selectMapPin(this, 'Liberty Highway / Expressway')"><i class="fa-solid fa-road"></i> Highway</button>
-                <button class="map-pin" style="top: 50%; left: 70%;" onclick="selectMapPin(this, 'Industrial Zone')"><i class="fa-solid fa-industry"></i> Industrial</button>
-                <button class="map-pin" style="top: 70%; left: 85%;" onclick="selectMapPin(this, 'Mountain Trail')"><i class="fa-solid fa-mountain"></i> Mountain</button>
-            </div>
-            <div style="margin-top: 10px; font-size: 0.8rem; color: var(--neon-cyan); font-weight: bold;">
-                📍 ตำแหน่งที่เลือก: <span id="selected-map-location" style="color: #fff;">River City (Downtown)</span>
             </div>
         </div>
 
@@ -200,46 +124,56 @@
 
         <div class="panel-box">
             <div class="panel-head">
-                <h3><i class="fa-solid fa-microphone-lines" style="color: var(--neon-blue);"></i> VOICE RADIO DISPATCH</h3>
+                <h3><i class="fa-solid fa-map-location-dot" style="color: var(--neon-gold);"></i> 1. เลือกโซนสถานที่เกิดเหตุ (ERLC ZONE)</h3>
             </div>
-            <div class="voice-card">
-                <button class="btn-mic" id="mic-btn" onclick="toggleVoice()">
-                    <i class="fa-solid fa-microphone"></i>
-                </button>
-                <p id="mic-status" style="font-size: 0.75rem; color: var(--neon-gold);">แตะปุ่ม หรือกด [Spacebar] ค้างไว้เพื่อพูด</p>
-                <div class="voice-text-preview" id="voice-result">รอรับเสียงพูด...</div>
-                <button class="btn-submit-login" style="background: #5865F2; color: #fff; font-size: 0.85rem;" onclick="sendVoiceDiscord()">
-                    <i class="fa-brands fa-discord"></i> TRANSMIT TO DISCORD
-                </button>
+            <div class="grid-selector">
+                <div class="select-btn active" onclick="selectZone(this, 'Bank (ธนาคารกลาง)')">🏦 Bank</div>
+                <div class="select-btn" onclick="selectZone(this, 'Jewelry Store (ร้านเพชร)')">💎 Jewelry</div>
+                <div class="select-btn" onclick="selectZone(this, 'Gas Station (ปั๊มน้ำมัน)')">⛽ Gas Station</div>
+                <div class="select-btn" onclick="selectZone(this, 'ATM / Convenience Store')">🏪 ATM / Store</div>
+                <div class="select-btn" onclick="selectZone(this, 'Downtown / River City')">🏙️ Downtown</div>
+                <div class="select-btn" onclick="selectZone(this, 'Residential / Suburbs')">🏡 Residential</div>
+                <div class="select-btn" onclick="selectZone(this, 'Liberty Highway')">🛣️ Highway</div>
+                <div class="select-btn" onclick="selectZone(this, 'Industrial Zone')">🏭 Industrial</div>
+                <div class="select-btn" onclick="selectZone(this, 'Farm / Mountain Trail')">⛰️ Mountain</div>
+            </div>
+            <div style="font-size:0.8rem; color:var(--neon-cyan); font-weight:bold;">📍 โซนที่เลือก: <span id="selected-zone-display" style="color:#fff;">Bank (ธนาคารกลาง)</span></div>
+        </div>
+
+        <div class="panel-box">
+            <div class="panel-head">
+                <h3><i class="fa-solid fa-handcuffs" style="color: var(--neon-red);"></i> 2. เลือกประเภทการกระทำผิด</h3>
+            </div>
+            <div class="grid-selector">
+                <div class="select-btn active" onclick="selectCrime(this, '🚨 [10-10] ใช้อาวุธปล้นสถานที่')">💰 ปล้นสถานที่</div>
+                <div class="select-btn" onclick="selectCrime(this, '💥 [10-13] พกอาวุธสงคราม / ยิงปะทะเจ้าหน้าที่')">🔫 ยิงปะทะ</div>
+                <div class="select-btn" onclick="selectCrime(this, '🏎️ [10-80] ขับรถแหกด่าน / ไล่ล่า (Pursuit)')">🏎️ แหกด่าน/ไล่ล่า</div>
+                <div class="select-btn" onclick="selectCrime(this, '👤 [10-31] บุคคลต้องสงสัย / ประกาศจับ BOLO')">👤 บุคคลต้องสงสัย</div>
+                <div class="select-btn" onclick="selectCrime(this, '🚗 [10-70] ขโมยยานพาหนะ')">🚘 ขโมยรถ</div>
+                <div class="select-btn" onclick="selectCrime(this, '⚠️ [10-99] มีพฤติกรรมเป็นภัยต่อสังคม')">⚠️ ก่อความวุ่นวาย</div>
             </div>
         </div>
 
         <div class="panel-box">
             <div class="panel-head">
-                <h3><i class="fa-solid fa-bolt-lightning" style="color: var(--neon-gold);"></i> RAPID DISPATCH (1-CLICK)</h3>
+                <h3><i class="fa-solid fa-user-ninja" style="color: var(--neon-blue);"></i> 3. ค้นหาคนร้าย / ทะเบียนรถ (จาก DATABASE)</h3>
             </div>
-            <div class="quick-grid">
-                <button class="btn-quick" onclick="quickSend('🚨 [10-10] BANK ROBBERY', 'ปล้นธนาคารกลาง')">💰 ปล้นธนาคาร <i class="fa-solid fa-paper-plane"></i></button>
-                <button class="btn-quick" onclick="quickSend('💥 [10-13] OFFICER UNDER FIRE', 'ยิงปะทะด่วน')">🔫 ยิงปะทะ <i class="fa-solid fa-paper-plane"></i></button>
-                <button class="btn-quick" onclick="quickSend('🏎️ [10-80] VEHICLE PURSUIT', 'ไล่ล่ารถต้องสงสัย')">🏎️ ไล่ล่ารถ <i class="fa-solid fa-paper-plane"></i></button>
-                <button class="btn-quick" onclick="quickSend('🚑 [10-99] EMS REQUIRED', 'ขอหมอ/กู้ภัยสนับสนุน')">🚑 ขอหมอ/EMS <i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-        </div>
+            <input type="text" id="suspect-search-input" class="input-dark" placeholder="พิมพ์ชื่อผู้ใช้งาน หรือ ทะเบียนรถ...">
+            <button class="btn-action" style="background:#1e293b; color:var(--neon-blue); border:1px solid var(--neon-blue);" onclick="searchSuspect()">
+                <i class="fa-solid fa-magnifying-glass"></i> ค้นหาประวัติในฐานข้อมูล Sheet
+            </button>
 
-        <div class="panel-box">
-            <div class="panel-head">
-                <h3><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--neon-cyan);"></i> BOLO & DATABASE SEARCH</h3>
+            <div id="suspect-card" class="suspect-info-card">
+                <div style="font-weight:bold; color:var(--neon-gold); margin-bottom:6px;"><i class="fa-solid fa-id-card"></i> ข้อมูลที่พบในฐานข้อมูล:</div>
+                <p>👤 <b>ชื่อผู้ใช้งาน:</b> <span id="info-name">-</span></p>
+                <p>🚘 <b>ทะเบียนรถ:</b> <span id="info-plate">-</span> | <b>ประเภท:</b> <span id="info-vtype">-</span></p>
+                <p>⚠️ <b>ค่าปรับค้างชำระ:</b> <span id="info-fine" style="color:var(--neon-red);">-</span></p>
+                <p>🪪 <b>ใบขับขี่:</b> <span id="info-driver">-</span> | 🔫 <b>ใบอนุญาตปืน:</b> <span id="info-gun">-</span></p>
             </div>
-            <input type="text" id="search-query" class="input-dark" placeholder="พิมพ์ชื่อคนร้าย / เลขทะเบียนรถ / ประกาศจับ BOLO...">
-            <button class="btn-action-sm" onclick="searchDatabase()"><i class="fa-solid fa-search"></i> ส่งประกาศ BOLO เข้า Discord</button>
-        </div>
 
-        <div class="panel-box">
-            <div class="panel-head">
-                <h3><i class="fa-solid fa-book-bookmark" style="color: var(--neon-green);"></i> PATROL SHIFT LOG</h3>
-            </div>
-            <input type="text" id="patrol-log-input" class="input-dark" placeholder="บันทึกเหตุการณ์ประจำกะ...">
-            <button class="btn-action-sm" style="background:var(--neon-green);" onclick="savePatrolLog()"><i class="fa-solid fa-floppy-disk"></i> บันทึก SHIFT LOG</button>
+            <button class="btn-action" style="background: linear-gradient(135deg, #f43f5e, #be123c); color:#fff; margin-top:15px; font-size:1rem;" onclick="sendIncidentToDiscord()">
+                <i class="fa-brands fa-discord"></i> 🚨 ส่งข้อมูลการปล้น/ทำผิด เข้า DISCORD ด่วน!
+            </button>
         </div>
 
         <div class="panel-box">
@@ -252,28 +186,114 @@
     </div>
 
     <script>
-        const GOOGLE_SHEET_ID = '11JrUuWvb1wgZJ4dEK-xo9b7ziqi7H4H0Zb2FVuIiB7Q';
+        const UNITS_SHEET_ID = '11JrUuWvb1wgZJ4dEK-xo9b7ziqi7H4H0Zb2FVuIiB7Q'; // Sheet Units สำหรับ Login & ลูกข่าย
+        const DATABASE_SHEET_ID = '1-6APHkfsmXqFHbwcw1cCm8yo_MYD1OzIRD7x8AeyXCk'; // Sheet1 ประวัติประชาชน/รถ
         const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1490811672129175753/vEDTTyvqk1pskfw8QypBE6Ofpg-vyVW45x3Ybg4chbbfHBfFbx2UCnNvbCZ7roL6ahWd';
-        const ERLC_MAP_IMAGE_URL = 'https://erlc-hub.pages.dev/map.png';
 
         let currentUser = null;
-        let currentChannel = 'CH-1 สายตรวจหลัก';
-        let currentLocation = 'River City (Downtown)';
-        let shiftStartTime = Date.now();
-        let isRecording = false;
-        let recognition;
+        let selectedZone = 'Bank (ธนาคารกลาง)';
+        let selectedCrime = '🚨 [10-10] ใช้อาวุธปล้นสถานที่';
+        let foundSuspectData = null;
 
-        function selectMapPin(btn, locationName) {
-            document.querySelectorAll('.map-pin').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentLocation = locationName;
-            document.getElementById('selected-map-location').innerText = locationName;
-        }
-
-        function setChannel(btn, chName) {
+        function selectZone(btn, zoneName) {
             btn.parentElement.querySelectorAll('.select-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentChannel = chName;
+            selectedZone = zoneName;
+            document.getElementById('selected-zone-display').innerText = zoneName;
+        }
+
+        function selectCrime(btn, crimeName) {
+            btn.parentElement.querySelectorAll('.select-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedCrime = crimeName;
+        }
+
+        // ค้นหาประวัติคนร้ายจาก Sheet1 คอลัมน์ A-H
+        async function searchSuspect() {
+            const query = document.getElementById('suspect-search-input').value.trim().toLowerCase();
+            if(!query) return alert('กรุณาพิมพ์ชื่อ หรือ ทะเบียนรถเพื่อค้นหา!');
+
+            try {
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${DATABASE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`);
+                const txt = await res.text();
+                const jsonText = txt.substring(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
+                const json = JSON.parse(jsonText);
+
+                let match = null;
+                json.table.rows.forEach(row => {
+                    if(!row.c) return;
+                    const username = row.c[0] ? String(row.c[0].v || row.c[0].f || '') : '';
+                    const plate = row.c[1] ? String(row.c[1].v || row.c[1].f || '') : '';
+
+                    if(username.toLowerCase().includes(query) || plate.toLowerCase().includes(query)) {
+                        match = {
+                            username: username || 'ไม่ระบุ',
+                            plate: plate || 'ไม่ระบุ',
+                            vType: row.c[2] ? String(row.c[2].v || '-') : '-',
+                            regStart: row.c[3] ? String(row.c[3].v || '-') : '-',
+                            regEnd: row.c[4] ? String(row.c[4].v || '-') : '-',
+                            fine: row.c[5] ? String(row.c[5].v || 'ไม่มีค้างชำระ') : 'ไม่มีค้างชำระ',
+                            driverLic: row.c[6] ? String(row.c[6].v || 'ไม่มี') : 'ไม่มี',
+                            gunLic: row.c[7] ? String(row.c[7].v || 'ไม่มี') : 'ไม่มี'
+                        };
+                    }
+                });
+
+                if(match) {
+                    foundSuspectData = match;
+                    document.getElementById('info-name').innerText = match.username;
+                    document.getElementById('info-plate').innerText = match.plate;
+                    document.getElementById('info-vtype').innerText = match.vType;
+                    document.getElementById('info-fine').innerText = match.fine;
+                    document.getElementById('info-driver').innerText = match.driverLic;
+                    document.getElementById('info-gun').innerText = match.gunLic;
+                    document.getElementById('suspect-card').style.display = 'block';
+                    alert('✅ พบข้อมูลในฐานข้อมูล!');
+                } else {
+                    foundSuspectData = { username: query, plate: 'ไม่พบในระบบ', vType: '-', fine: '-', driverLic: '-', gunLic: '-' };
+                    document.getElementById('info-name').innerText = query + ' (ไม่มีประวัติใน Sheet)';
+                    document.getElementById('info-plate').innerText = 'ไม่พบข้อมูล';
+                    document.getElementById('info-vtype').innerText = '-';
+                    document.getElementById('info-fine').innerText = '-';
+                    document.getElementById('info-driver').innerText = '-';
+                    document.getElementById('info-gun').innerText = '-';
+                    document.getElementById('suspect-card').style.display = 'block';
+                    alert('⚠️ ไม่พบข้อมูลตรงกับคำค้นหา แต่เปิดพร้อมให้ส่งเหตุได้');
+                }
+            } catch(e) {
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheet Database!');
+            }
+        }
+
+        // ส่งข้อมูลการทำผิดเข้า DISCORD
+        async function sendIncidentToDiscord() {
+            const rawSearchInput = document.getElementById('suspect-search-input').value.trim();
+            const sName = foundSuspectData ? foundSuspectData.username : (rawSearchInput || 'ไม่ระบุชื่อ/ต้องสงสัย');
+            const sPlate = foundSuspectData ? foundSuspectData.plate : '-';
+            const sFine = foundSuspectData ? foundSuspectData.fine : '-';
+            const sGun = foundSuspectData ? foundSuspectData.gunLic : '-';
+
+            await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: "BCPD CAD Incident Alert",
+                    embeds: [{
+                        title: `${selectedCrime}`,
+                        color: 15548997,
+                        fields: [
+                            { name: "📍 สถานที่เกิดเหตุ (Zone)", value: `**${selectedZone}**`, inline: true },
+                            { name: "👤 ผู้ต้องสงสัย/ผู้ทำผิด", value: `**${sName}**`, inline: true },
+                            { name: "🚘 ทะเบียนรถ / ประเภท", value: `${sPlate} (${foundSuspectData ? foundSuspectData.vType : '-'})`, inline: true },
+                            { name: "⚠️ ประวัติค่าปรับค้างชำระ", value: `${sFine}`, inline: true },
+                            { name: "🔫 ใบอนุญาตพกอาวุธปืน", value: `${sGun}`, inline: true },
+                            { name: "👮 เจ้าหน้าที่ผู้รายงาน", value: `${currentUser.callsign} (${currentUser.name})`, inline: true }
+                        ],
+                        timestamp: new Date()
+                    }]
+                })
+            });
+            alert('🚀 ส่งรายงานการปล้น/กระทำผิดเข้า Discord เรียบร้อย!');
         }
 
         async function secureLogin() {
@@ -281,7 +301,7 @@
             if(!pin) return alert('กรุณากรอกรหัสผ่านประจำตัว!');
 
             try {
-                const res = await fetch(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${UNITS_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
                 const txt = await res.text();
                 const jsonText = txt.substring(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
                 const json = JSON.parse(jsonText);
@@ -301,18 +321,18 @@
 
                 if(foundUser) {
                     currentUser = foundUser;
-                    localStorage.setItem('bcpd_sec_user_v6_full', JSON.stringify(currentUser));
+                    localStorage.setItem('bcpd_sec_user_v6_db', JSON.stringify(currentUser));
                     initDashboard();
                 } else {
                     alert('❌ รหัสผ่านไม่ถูกต้อง!');
                 }
             } catch(e) {
-                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheet!');
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheet Units!');
             }
         }
 
         function logout() {
-            localStorage.removeItem('bcpd_sec_user_v6_full');
+            localStorage.removeItem('bcpd_sec_user_v6_db');
             location.reload();
         }
 
@@ -322,37 +342,18 @@
             document.getElementById('user-cs').innerText = `${currentUser.callsign} (${currentUser.name})`;
             document.getElementById('user-rank').innerText = currentUser.rank;
 
-            startShiftTimer();
-            startAutoSync();
-            setupHotkeys();
-        }
-
-        function startShiftTimer() {
-            setInterval(() => {
-                const diff = Math.floor((Date.now() - shiftStartTime) / 1000);
-                const hrs = String(Math.floor(diff / 3600)).padStart(2, '0');
-                const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
-                const secs = String(diff % 60).padStart(2, '0');
-                document.getElementById('shift-timer').innerHTML = `<i class="fa-regular fa-clock"></i> ${hrs}:${mins}:${secs}`;
-            }, 1000);
-        }
-
-        function setupHotkeys() {
+            syncUnits();
+            setInterval(syncUnits, 4000);
+            
             window.addEventListener('keydown', (e) => {
                 if(e.target.tagName === 'INPUT') return;
-                if(e.code === 'Space' && !isRecording) { e.preventDefault(); toggleVoice(); }
                 if(e.shiftKey && e.code === 'KeyS') { e.preventDefault(); sendPanicAlert(); }
-            });
-            window.addEventListener('keyup', (e) => {
-                if(e.target.tagName === 'INPUT') return;
-                if(e.code === 'Space' && isRecording) { e.preventDefault(); toggleVoice(); }
             });
         }
 
-        // SYNC UNITS (ระบบแสดงลูกข่าย)
         async function syncUnits() {
             try {
-                const res = await fetch(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${UNITS_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
                 const txt = await res.text();
                 const jsonText = txt.substring(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
                 const json = JSON.parse(jsonText);
@@ -373,87 +374,6 @@
             } catch(e){}
         }
 
-        function startAutoSync() { syncUnits(); setInterval(syncUnits, 4000); }
-
-        // SPEECH RECOGNITION
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'th-TH';
-            
-            recognition.onstart = function() {
-                isRecording = true;
-                document.getElementById('mic-btn').classList.add('recording');
-                document.getElementById('mic-status').innerText = '🔴 กำลังจับเสียงพูดวิทยุ...';
-            };
-            recognition.onresult = function(event) {
-                let transcript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    transcript += event.results[i][0].transcript;
-                }
-                document.getElementById('voice-result').innerText = transcript;
-            };
-            recognition.onend = function() {
-                isRecording = false;
-                document.getElementById('mic-btn').classList.remove('recording');
-                document.getElementById('mic-status').innerText = 'แตะปุ่ม หรือกด [Spacebar] ค้างไว้เพื่อพูด';
-            };
-        }
-
-        function toggleVoice() {
-            if(!recognition) return alert('เบราว์เซอร์ไม่รองรับระบบสั่งการเสียง');
-            isRecording ? recognition.stop() : recognition.start();
-        }
-
-        async function sendVoiceDiscord() {
-            const text = document.getElementById('voice-result').innerText.trim();
-            if(!text || text === 'รอรับเสียงพูด...') return alert('กรุณาพูดสั่งการก่อนส่ง!');
-
-            await fetch(DISCORD_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: "BCPD ERLC Tactical Dispatch",
-                    embeds: [{
-                        title: `🎙️ [VOICE DISPATCH] ${currentChannel}`,
-                        color: 3801080,
-                        fields: [
-                            { name: "📢 ข้อความวิทยุ", value: `\`\`\`${text}\`\`\`` },
-                            { name: "🗺️ พิกัดแผนที่ ERLC", value: currentLocation, inline: true },
-                            { name: "👮 ผู้สั่งการ", value: `${currentUser.callsign} (${currentUser.name})`, inline: true }
-                        ],
-                        image: { url: ERLC_MAP_IMAGE_URL },
-                        timestamp: new Date()
-                    }]
-                })
-            });
-            alert('🚀 ส่งวิทยุเสียงพร้อมพิกัดเข้า Discord เรียบร้อย!');
-            document.getElementById('voice-result').innerText = 'รอรับเสียงพูด...';
-        }
-
-        async function quickSend(title, detail) {
-            await fetch(DISCORD_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: "BCPD Rapid Dispatch",
-                    embeds: [{
-                        title: title,
-                        color: 15548997,
-                        fields: [
-                            { name: "📻 ข่ายวิทยุ", value: currentChannel, inline: true },
-                            { name: "📍 พิกัดแผนที่ ERLC", value: currentLocation, inline: true },
-                            { name: "🚨 รายละเอียด", value: detail },
-                            { name: "👮 ผู้แจ้งเหตุ", value: `${currentUser.callsign} (${currentUser.name})` }
-                        ],
-                        image: { url: ERLC_MAP_IMAGE_URL },
-                        timestamp: new Date()
-                    }]
-                })
-            });
-            alert('🚀 แจ้งเหตุเข้า Discord เรียบร้อย!');
-        }
-
         async function sendPanicAlert() {
             await fetch(DISCORD_WEBHOOK_URL, {
                 method: 'POST',
@@ -466,9 +386,8 @@
                         color: 16007990,
                         fields: [
                             { name: "👮 ผู้ประสบเหตุ", value: `${currentUser.callsign} | ${currentUser.name}` },
-                            { name: "📍 พิกัดแผนที่ ERLC", value: currentLocation, inline: true }
+                            { name: "📍 พิกัดโซน", value: selectedZone, inline: true }
                         ],
-                        image: { url: ERLC_MAP_IMAGE_URL },
                         timestamp: new Date()
                     }]
                 })
@@ -476,57 +395,7 @@
             alert('🚨 ส่งสัญญาณ SOS เข้า Discord เรียบร้อย!');
         }
 
-        async function searchDatabase() {
-            const q = document.getElementById('search-query').value.trim();
-            if(!q) return alert('กรุณากรอกข้อมูล BOLO!');
-
-            await fetch(DISCORD_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: "BCPD BOLO & Database",
-                    embeds: [{
-                        title: "🔍 [BOLO / DATABASE LOOKUP]",
-                        color: 43775,
-                        fields: [
-                            { name: "🔎 รายการ BOLO", value: `\`${q}\`` },
-                            { name: "📍 โซนที่พบเห็น", value: currentLocation, inline: true },
-                            { name: "👮 ร้องขอโดย", value: `${currentUser.callsign} (${currentUser.name})`, inline: true }
-                        ],
-                        timestamp: new Date()
-                    }]
-                })
-            });
-            alert('🔍 ส่งประกาศ BOLO เข้า Discord เรียบร้อย!');
-            document.getElementById('search-query').value = '';
-        }
-
-        async function savePatrolLog() {
-            const logText = document.getElementById('patrol-log-input').value.trim();
-            if(!logText) return alert('กรุณากรอกข้อความ Log!');
-
-            await fetch(DISCORD_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: "BCPD Shift Logger",
-                    embeds: [{
-                        title: "📝 [SHIFT LOG] บันทึกประจำกะ",
-                        color: 1095793,
-                        fields: [
-                            { name: "📌 บันทึก", value: logText },
-                            { name: "📍 โซนพื้นที่", value: currentLocation, inline: true },
-                            { name: "👮 บันทึกโดย", value: `${currentUser.callsign} (${currentUser.name})`, inline: true }
-                        ],
-                        timestamp: new Date()
-                    }]
-                })
-            });
-            alert('📝 บันทึก Shift Log เรียบร้อย!');
-            document.getElementById('patrol-log-input').value = '';
-        }
-
-        const savedUser = localStorage.getItem('bcpd_sec_user_v6_full');
+        const savedUser = localStorage.getItem('bcpd_sec_user_v6_db');
         if(savedUser) {
             currentUser = JSON.parse(savedUser);
             initDashboard();
