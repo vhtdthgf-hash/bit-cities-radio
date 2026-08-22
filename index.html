@@ -1,1474 +1,305 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BCPD // CAD DISPATCH</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERLC // CAD DISPATCH</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#050806;
-  --panel:#0a110d;
-  --panel2:#0e1812;
-  --line:#1b2b21;
-  --line2:#294235;
-  --green:#39f6a0;
-  --green2:#1d8d5b;
-  --amber:#ffb52e;
-  --red:#ff4141;
-  --blue:#52a7ff;
-  --text:#e2eee7;
-  --muted:#718278;
-  --mono:"JetBrains Mono",monospace;
-  --display:"Rajdhani",sans-serif;
-  --sans:"Inter",sans-serif;
-}
-
-*{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  min-height:100%;
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--sans)
-}
-
-body{
-  background:
-    linear-gradient(rgba(57,246,160,.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(57,246,160,.025) 1px,transparent 1px),
-    radial-gradient(circle at 50% -10%,rgba(57,246,160,.09),transparent 45%),
-    var(--bg);
-  background-size:42px 42px,42px 42px,100% 100%,auto;
-}
-
-button,input,textarea{font:inherit}
-
-button{cursor:pointer}
-
-#login{
-  position:fixed;
-  inset:0;
-  z-index:100;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    radial-gradient(circle at center,rgba(57,246,160,.08),transparent 40%),
-    rgba(2,5,3,.96);
-}
-
-.login{
-  width:min(390px,92vw);
-  border:1px solid var(--line2);
-  background:rgba(8,15,11,.95);
-  box-shadow:0 30px 100px #000;
-  padding:32px;
-  position:relative;
-}
-
-.login:before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:3px;
-  background:linear-gradient(90deg,var(--green),var(--amber));
-}
-
-.kicker{
-  color:var(--muted);
-  font:11px var(--mono);
-  letter-spacing:.18em;
-  margin-bottom:8px;
-}
-
-.login h1{
-  font:700 42px var(--display);
-  margin:0;
-  letter-spacing:.04em;
-}
-
-.login h1 span{color:var(--green)}
-
-.login p{
-  color:var(--muted);
-  font:11px var(--mono);
-  margin:4px 0 28px;
-}
-
-.pin{
-  width:100%;
-  padding:15px;
-  background:#050806;
-  border:1px solid var(--line2);
-  color:var(--green);
-  outline:none;
-  text-align:center;
-  letter-spacing:.4em;
-}
-
-.pin:focus{
-  border-color:var(--green);
-  box-shadow:0 0 0 3px rgba(57,246,160,.1)
-}
-
-.primary{
-  width:100%;
-  border:0;
-  background:var(--green);
-  color:#03120a;
-  font:700 14px var(--display);
-  letter-spacing:.1em;
-  padding:14px;
-  margin-top:12px;
-}
-
-.primary:hover{
-  box-shadow:0 0 25px rgba(57,246,160,.25)
-}
-
-#error{
-  min-height:18px;
-  color:var(--red);
-  font:11px var(--mono);
-  margin-top:10px;
-}
-
-#app{display:none}
-
-header{
-  position:sticky;
-  top:0;
-  z-index:20;
-  height:70px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 26px;
-  border-bottom:1px solid var(--line);
-  background:rgba(7,12,9,.9);
-  backdrop-filter:blur(14px);
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.brand-dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 12px var(--green);
-}
-
-.brand h2{
-  margin:0;
-  font:700 21px var(--display);
-}
-
-.brand h2 span{color:var(--amber)}
-
-.brand small{
-  display:block;
-  color:var(--muted);
-  font:9px var(--mono);
-  letter-spacing:.15em;
-}
-
-.header-right{
-  display:flex;
-  align-items:center;
-  gap:18px;
-}
-
-.clock{
-  text-align:right;
-  font:11px var(--mono);
-  color:var(--muted);
-}
-
-.clock b{
-  display:block;
-  color:var(--green);
-  font-size:15px;
-}
-
-.user{
-  padding-left:18px;
-  border-left:1px solid var(--line);
-  font:11px var(--mono);
-}
-
-.user b{color:var(--text)}
-
-.user span{color:var(--amber)}
-
-.logout{
-  background:transparent;
-  border:1px solid var(--line2);
-  color:var(--muted);
-  padding:8px 11px;
-  font:11px var(--mono);
-}
-
-.logout:hover{
-  color:var(--red);
-  border-color:var(--red)
-}
-
-main{
-  max-width:1500px;
-  margin:auto;
-  padding:22px 25px 100px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-bottom:18px;
-}
-
-.stat{
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,var(--panel2),var(--panel));
-  padding:18px;
-  position:relative;
-}
-
-.stat:after{
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:0;
-  height:2px;
-  width:45%;
-  background:var(--green2);
-}
-
-.stat-label{
-  color:var(--muted);
-  font:10px var(--mono);
-  letter-spacing:.12em;
-}
-
-.stat-value{
-  margin-top:5px;
-  font:700 30px var(--display);
-}
-
-.layout{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 350px;
-  gap:18px;
-}
-
-.card{
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(14,24,18,.8),rgba(8,14,10,.8));
-  padding:19px;
-  margin-bottom:18px;
-}
-
-.card-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
-  font:700 14px var(--display);
-  letter-spacing:.14em;
-  color:var(--muted);
-  text-transform:uppercase;
-}
-
-.badge{
-  color:var(--amber);
-  font:10px var(--mono);
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(135px,1fr));
-  gap:8px;
-}
-
-.choice{
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-  padding:12px 8px;
-  font-size:12px;
-  transition:.15s;
-}
-
-.choice:hover{
-  border-color:var(--line2);
-  transform:translateY(-1px)
-}
-
-.choice.active{
-  color:var(--green);
-  border-color:var(--green);
-  background:rgba(57,246,160,.08);
-}
-
-.choice.incident.active{
-  color:var(--amber);
-  border-color:var(--amber);
-  background:rgba(255,181,46,.08);
-}
-
-.selected{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:12px;
-}
-
-.selected div{
-  border:1px solid var(--line);
-  padding:6px 9px;
-  color:var(--muted);
-  font:10px var(--mono);
-}
-
-.selected b{color:var(--text)}
-
-textarea{
-  width:100%;
-  min-height:90px;
-  resize:vertical;
-  background:#050806;
-  color:var(--text);
-  border:1px solid var(--line);
-  outline:none;
-  padding:12px;
-}
-
-textarea:focus,input:focus{
-  border-color:var(--green)
-}
-
-.create{
-  width:100%;
-  margin-top:10px;
-  padding:13px;
-  border:0;
-  background:var(--green);
-  color:#03120a;
-  font:700 14px var(--display);
-  letter-spacing:.08em;
-}
-
-.search{
-  display:flex;
-  gap:8px;
-}
-
-.search input{
-  flex:1;
-  background:#050806;
-  border:1px solid var(--line);
-  color:var(--text);
-  padding:12px;
-  outline:none;
-}
-
-.search button{
-  border:1px solid var(--line2);
-  background:var(--panel2);
-  color:var(--text);
-  padding:0 18px;
-}
-
-.record{
-  margin-top:9px;
-  border:1px solid var(--line);
-  border-left:2px solid var(--green2);
-  padding:13px;
-  background:var(--panel2);
-}
-
-.record-name{
-  font-weight:700;
-  margin-bottom:9px;
-}
-
-.record-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:6px;
-  color:var(--muted);
-  font:11px var(--mono);
-}
-
-.record-grid b{color:var(--text)}
-
-.call{
-  border:1px solid var(--line);
-  background:var(--panel2);
-  padding:13px;
-  margin-bottom:8px;
-}
-
-.call-top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.call-id{
-  color:var(--green);
-  font:700 12px var(--mono);
-}
-
-.call-status{
-  font:10px var(--mono);
-  padding:4px 7px;
-  border:1px solid var(--line2);
-}
-
-.call-main{
-  margin-top:8px;
-  font-size:13px;
-  font-weight:600;
-}
-
-.call-sub{
-  margin-top:5px;
-  color:var(--muted);
-  font:10px var(--mono);
-}
-
-.call-actions{
-  display:flex;
-  gap:6px;
-  margin-top:11px;
-  flex-wrap:wrap;
-}
-
-.call-actions button{
-  background:transparent;
-  border:1px solid var(--line2);
-  color:var(--muted);
-  padding:6px 8px;
-  font:10px var(--mono);
-}
-
-.call-actions button:hover{
-  color:var(--green);
-  border-color:var(--green)
-}
-
-.unit{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 0;
-  border-bottom:1px solid var(--line);
-}
-
-.unit:last-child{border-bottom:0}
-
-.unit-left{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#333;
-}
-
-.dot.online{
-  background:var(--green);
-  box-shadow:0 0 8px var(--green)
-}
-
-.dot.busy{
-  background:var(--amber);
-  box-shadow:0 0 8px var(--amber)
-}
-
-.unit-name{
-  font:12px var(--mono);
-}
-
-.unit-rank{
-  color:var(--muted);
-  font:10px var(--mono);
-}
-
-.status-btn{
-  background:transparent;
-  border:1px solid var(--line2);
-  color:var(--green);
-  padding:6px 8px;
-  font:9px var(--mono);
-}
-
-.empty{
-  padding:15px 0;
-  color:var(--muted);
-  font:11px var(--mono);
-}
-
-#sos{
-  position:fixed;
-  right:24px;
-  bottom:24px;
-  z-index:50;
-  width:72px;
-  height:72px;
-  border-radius:50%;
-  border:2px solid #ff8888;
-  background:var(--red);
-  color:#250000;
-  font:800 14px var(--display);
-  box-shadow:0 0 0 rgba(255,65,65,0);
-  animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-  70%{box-shadow:0 0 0 18px rgba(255,65,65,0)}
-  0%{box-shadow:0 0 0 0 rgba(255,65,65,.45)}
-}
-
-#toast{
-  position:fixed;
-  top:84px;
-  left:50%;
-  transform:translateX(-50%) translateY(-20px);
-  opacity:0;
-  pointer-events:none;
-  z-index:200;
-  background:var(--panel);
-  border:1px solid var(--green);
-  color:var(--green);
-  padding:10px 16px;
-  font:11px var(--mono);
-  transition:.2s;
-}
-
-#toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0)
-}
-
-#toast.error{
-  border-color:var(--red);
-  color:var(--red)
-}
-
-@media(max-width:1000px){
-  .layout{grid-template-columns:1fr}
-}
-
-@media(max-width:700px){
-  header{padding:0 13px}
-  .clock{display:none}
-  .user{display:none}
-  main{padding:14px 12px 100px}
-  .stats{grid-template-columns:1fr 1fr}
-  .stats .stat{padding:13px}
-  .stat-value{font-size:25px}
-  .grid{grid-template-columns:repeat(2,1fr)}
-}
-
-@media(max-width:400px){
-  .stats{grid-template-columns:1fr}
-}
+:root{--bg:#05080a;--panel:#0b1210;--panel2:#0f1a15;--line:#1c2b25;--bright:#2b4438;--green:#38ffa0;--amber:#ffb020;--red:#ff3b3b;--blue:#55aaff;--text:#dfeee6;--dim:#6f8478;--mono:'JetBrains Mono',monospace;--disp:'Rajdhani',sans-serif;--sans:'Inter',sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+button,input,textarea{font:inherit}button{cursor:pointer}::selection{background:var(--green);color:#03110a}
+#grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:42px 42px;opacity:.28}
+#scanlines{position:fixed;inset:0;z-index:45;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+#login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50}
+.login-box{width:380px;background:rgba(11,18,16,.94);border:1px solid var(--bright);padding:34px 30px;position:relative;box-shadow:0 30px 90px #000}
+.login-box:before{content:"";position:absolute;top:-1px;left:-1px;right:-1px;height:3px;background:linear-gradient(90deg,var(--green),var(--amber))}
+.eyebrow,.login-sub,.login-foot,.pin-dots,.login-error{font-family:var(--mono)}
+.eyebrow{font-size:10px;letter-spacing:.2em;color:var(--dim);margin-bottom:9px}.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 9px var(--green)}
+.login-title{font-family:var(--disp);font-size:38px;margin:0;font-weight:700}.login-title span{color:var(--green)}.login-sub{font-size:10px;color:var(--dim);margin:5px 0 25px}
+.pin-dots{display:flex;justify-content:center;gap:8px;margin-bottom:12px}.pin-dots i{width:9px;height:9px;border:1px solid var(--bright);border-radius:50%}.pin-dots i.filled{background:var(--green);border-color:var(--green);box-shadow:0 0 8px var(--green)}
+#pin-input{width:100%;background:var(--bg);border:1px solid var(--bright);color:transparent;caret-color:var(--green);text-align:center;font-size:22px;letter-spacing:.6em;padding:13px;outline:none}
+#pin-input:focus{border-color:var(--green);box-shadow:0 0 0 3px #38ffa01c}
+#login-btn,#send-report-btn{width:100%;margin-top:14px;padding:13px;background:var(--green);color:#03150c;border:0;font-family:var(--disp);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+#login-btn:disabled,#send-report-btn:disabled{opacity:.5;cursor:wait}.login-error{color:var(--red);font-size:11px;min-height:17px;margin-top:10px}.login-foot{border-top:1px dashed var(--line);padding-top:15px;margin-top:18px;text-align:center;color:var(--dim);font-size:9px}
+#app{display:none;position:relative;z-index:1}header{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:13px 24px;background:#0b1210e8;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:10px}.brand-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.brand h1{font-family:var(--disp);font-size:19px;margin:0}.brand h1 b{color:var(--amber)}.brand small{display:block;font:9px var(--mono);color:var(--dim);letter-spacing:.14em}
+.header-right{display:flex;align-items:center;gap:18px}#clock{text-align:right;font:11px var(--mono);color:var(--dim)}#clock b{display:block;color:var(--green);font-size:14px}
+#whoami{text-align:right;font:11px var(--mono);color:var(--dim);line-height:1.4}#whoami b{color:var(--text)}.rank-tag{color:var(--amber)}
+#logout-btn,.small-btn{background:transparent;border:1px solid var(--bright);color:var(--dim);padding:8px 11px;font:10px var(--mono)}#logout-btn:hover,.small-btn:hover{border-color:var(--red);color:var(--red)}
+main{max-width:1500px;margin:auto;padding:20px 24px 100px;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px}
+.card{background:linear-gradient(180deg,#0f1a15b8,#0b1210b8);border:1px solid var(--line);padding:18px;position:relative;margin-bottom:18px}.card:after{content:"";position:absolute;top:0;left:0;width:25px;height:25px;border-top:2px solid var(--green);border-left:2px solid var(--green);opacity:.45}
+.card h2{font:700 13px var(--disp);letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin:0 0 13px;display:flex;justify-content:space-between}.count{color:var(--amber);font:10px var(--mono)}
+.grid-btns{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:8px}.pill-btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:11px 7px;font-size:12px;transition:.15s}.pill-btn:hover{border-color:var(--dim);transform:translateY(-1px)}.pill-btn.selected{border-color:var(--green);color:var(--green);background:#38ffa016}.pill-btn.incident.selected{border-color:var(--amber);color:var(--amber);background:#ffb02016}
+.selection-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px;font:10px var(--mono);color:var(--dim)}.selection-strip span{border:1px solid var(--line);padding:5px 8px}.selection-strip b{color:var(--text)}
+textarea{width:100%;min-height:82px;resize:vertical;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:11px;outline:0;font-size:12px}textarea:focus,input:focus{border-color:var(--green)}
+#report-status,#search-status{font:10px var(--mono);margin-top:8px;min-height:15px}
+.search-row{display:flex;gap:7px}.search-row input{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:11px;font:12px var(--mono);outline:0}.search-row button{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:0 17px;font:700 12px var(--disp)}
+.record{border:1px solid var(--line);border-left:2px solid var(--green-dim);background:var(--panel2);padding:12px;margin-top:8px}.rname{font-size:14px;font-weight:600;margin-bottom:8px}.record-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;font:10px var(--mono);color:var(--dim)}.record-grid b{color:var(--text)}.flag-bad{color:var(--red)!important}.flag-ok{color:var(--green)!important}
+.unit-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font:11px var(--mono)}.unit-row:last-child{border:0}.unit-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px}.unit-dot.on{background:var(--green);box-shadow:0 0 7px var(--green)}.unit-dot.busy{background:var(--amber);box-shadow:0 0 7px var(--amber)}.unit-dot.off{background:#444}.unit-role{color:var(--dim);font-size:10px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:15px}.stat{background:var(--bg);border:1px solid var(--line);padding:11px}.stat b{display:block;font:700 19px var(--disp);color:var(--green)}.stat span{font:9px var(--mono);color:var(--dim)}
+.call{border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel2);padding:11px;margin-top:8px}.call-top{display:flex;justify-content:space-between;font:700 12px var(--disp)}.call-meta{font:10px var(--mono);color:var(--dim);margin-top:5px}.call-actions{display:flex;gap:6px;margin-top:8px}.call-actions button{font:9px var(--mono);padding:6px 8px;background:transparent;border:1px solid var(--line);color:var(--dim)}.call-actions button:hover{border-color:var(--green);color:var(--green)}
+.log-feed{margin-top:16px;border-top:1px dashed var(--line);padding-top:15px}.log-line{display:flex;gap:8px;font:10px var(--mono);color:var(--dim);margin:6px 0}.log-line .t{color:var(--green)}
+#sos-btn{position:fixed;right:25px;bottom:25px;width:68px;height:68px;border-radius:50%;background:var(--red);border:2px solid #ff8080;color:#180000;font:800 13px var(--disp);z-index:20;box-shadow:0 0 0 0 #ff3b3b66;animation:pulse 2.2s infinite}@keyframes pulse{70%{box-shadow:0 0 0 18px transparent}100%{box-shadow:0 0 0 0 transparent}}
+#sos-modal{position:fixed;inset:0;background:#05080acc;z-index:70;display:none;align-items:center;justify-content:center}.sos-box{width:330px;background:var(--panel);border:1px solid var(--red);padding:25px;text-align:center}.sos-box h3{font:700 21px var(--disp);color:var(--red);margin:0 0 8px}.sos-box p{font:10px var(--mono);color:var(--dim)}.sos-actions{display:flex;gap:8px}.sos-actions button{flex:1;padding:10px;border:0}.confirm{background:var(--red)}.cancel{background:var(--panel2);color:var(--dim);border:1px solid var(--line)}
+#toast{position:fixed;top:17px;left:50%;transform:translate(-50%,-150%);z-index:100;background:var(--panel);border:1px solid var(--green);color:var(--green);padding:10px 18px;font:11px var(--mono);transition:.25s}#toast.show{transform:translate(-50%,0)}#toast.err{border-color:var(--red);color:var(--red)}
+@media(max-width:900px){main{grid-template-columns:1fr;padding:15px 12px 100px}header{padding:11px 13px}.brand small{display:none}.header-right{gap:7px}#clock{display:none}.login-box{width:calc(100% - 30px)}}
 </style>
 </head>
-
 <body>
+<div id="grid-bg"></div><div id="scanlines"></div>
 
-<div id="login">
-  <div class="login">
-    <div class="kicker">BCPD // SECURE CAD TERMINAL</div>
-    <h1>CAD<span>·</span>LOGIN</h1>
-    <p>AUTHORIZED UNIT ACCESS ONLY</p>
-
-    <input id="pin" class="pin"
-      type="password"
-      inputmode="numeric"
-      maxlength="8"
-      placeholder="UNIT PIN"
-      autocomplete="off">
-
-    <button id="loginBtn" class="primary">AUTHENTICATE</button>
-    <div id="error"></div>
+<div id="login-screen">
+  <div class="login-box">
+    <div class="eyebrow"><span class="live-dot"></span> ERLC // RECORDS & DISPATCH</div>
+    <h1 class="login-title">CAD<span>·</span>TERM</h1>
+    <div class="login-sub">UNIT AUTHENTICATION // LOCAL DATABASE MODE</div>
+    <div class="pin-dots" id="pin-dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <input id="pin-input" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+    <button id="login-btn">SIGN IN</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-foot">LOCAL CAD STORAGE · DATA PERSISTS IN THIS BROWSER</div>
   </div>
 </div>
 
 <div id="app">
-
 <header>
-  <div class="brand">
-    <div class="brand-dot"></div>
-    <div>
-      <h2>BCPD <span>CAD</span> DISPATCH</h2>
-      <small>BIT CITIES POLICE DEPARTMENT // REAL-TIME SYSTEM</small>
-    </div>
-  </div>
-
-  <div class="header-right">
-    <div class="clock">
-      <b id="time">--:--:--</b>
-      <span id="date">----</span>
-    </div>
-
-    <div class="user" id="user"></div>
-
-    <button class="logout" id="logout">SIGN OUT</button>
-  </div>
+  <div class="brand"><span class="brand-dot"></span><div><h1>ERLC <b>CAD</b> DISPATCH</h1><small>REAL-TIME DISPATCH TERMINAL // v2</small></div></div>
+  <div class="header-right"><div id="clock"><b id="clock-time">--:--:--</b><span id="clock-date">----</span></div><div id="whoami"></div><button id="logout-btn">SIGN OUT</button></div>
 </header>
 
 <main>
-
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-label">ACTIVE UNITS</div>
-      <div class="stat-value" id="statUnits">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-label">ACTIVE CALLS</div>
-      <div class="stat-value" id="statCalls">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-label">OFFICERS ONLINE</div>
-      <div class="stat-value" id="statOnline">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-label">INCIDENTS TODAY</div>
-      <div class="stat-value" id="statIncidents">0</div>
+<div>
+  <div class="card">
+    <h2>Command overview <span class="count" id="session-state">ONLINE</span></h2>
+    <div class="stat-grid">
+      <div class="stat"><b id="stat-units">0</b><span>UNITS ONLINE</span></div>
+      <div class="stat"><b id="stat-calls">0</b><span>ACTIVE CALLS</span></div>
+      <div class="stat"><b id="stat-reports">0</b><span>REPORTS FILED</span></div>
     </div>
   </div>
 
-  <div class="layout">
-
-    <div>
-
-      <section class="card">
-        <div class="card-title">
-          CREATE DISPATCH CALL
-          <span class="badge">NEW CALL</span>
-        </div>
-
-        <div class="selected">
-          <div>LOCATION: <b id="selectedLocation">NONE</b></div>
-          <div>INCIDENT: <b id="selectedIncident">NONE</b></div>
-        </div>
-
-        <div class="grid" id="locations"></div>
-
-        <br>
-
-        <div class="grid" id="incidents"></div>
-
-        <br>
-
-        <textarea id="notes"
-          placeholder="Additional dispatch information..."></textarea>
-
-        <button class="create" id="createCall">
-          CREATE DISPATCH CALL
-        </button>
-      </section>
-
-      <section class="card">
-        <div class="card-title">
-          ACTIVE CALLS
-          <span class="badge" id="callCount">0</span>
-        </div>
-
-        <div id="calls">
-          <div class="empty">NO ACTIVE CALLS</div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card-title">RECORDS SEARCH</div>
-
-        <div class="search">
-          <input id="search"
-            placeholder="Search name or plate number...">
-          <button id="searchBtn">SEARCH</button>
-        </div>
-
-        <div id="records"></div>
-      </section>
-
-    </div>
-
-    <aside>
-
-      <section class="card">
-        <div class="card-title">
-          ACTIVE UNITS
-          <span class="badge" id="unitCount">0 ONLINE</span>
-        </div>
-
-        <div id="units">
-          <div class="empty">LOADING ROSTER...</div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card-title">MY STATUS</div>
-
-        <div class="grid">
-          <button class="choice" data-status="10-8">10-8</button>
-          <button class="choice" data-status="BUSY">BUSY</button>
-          <button class="choice" data-status="OFF_DUTY">OFF DUTY</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card-title">SYSTEM LOG</div>
-        <div id="logs"></div>
-      </section>
-
-    </aside>
-
+  <div class="card">
+    <h2>Location <span class="count" id="zone-count"></span></h2>
+    <div class="grid-btns" id="zone-grid"></div>
   </div>
 
-</main>
+  <div class="card">
+    <h2>Incident type <span class="count" id="incident-count"></span></h2>
+    <div class="grid-btns" id="incident-grid"></div>
+  </div>
 
-<button id="sos">SOS</button>
+  <div class="card">
+    <h2>File dispatch report</h2>
+    <div class="selection-strip"><span>LOCATION: <b id="sel-zone">NONE</b></span><span>INCIDENT: <b id="sel-incident">NONE</b></span></div>
+    <textarea id="report-notes" placeholder="Additional notes for dispatch..."></textarea>
+    <button id="send-report-btn">CREATE DISPATCH CALL</button>
+    <div id="report-status"></div>
+  </div>
 
-<div id="toast"></div>
-
+  <div class="card">
+    <h2>Records search</h2>
+    <div class="search-row"><input id="search-input" placeholder="Name or plate number..."><button id="search-btn">SEARCH</button></div>
+    <div id="search-status"></div><div id="search-results"></div>
+  </div>
 </div>
 
+<div>
+  <div class="card">
+    <h2>Active units <span class="count" id="units-count">0 online</span></h2>
+    <div id="units-list"></div>
+  </div>
+
+  <div class="card">
+    <h2>Active calls <span class="count" id="calls-count">0</span></h2>
+    <div id="calls-list"></div>
+  </div>
+
+  <div class="card">
+    <h2>Session log</h2>
+    <div id="log-list"></div>
+  </div>
+</div>
+</main>
+</div>
+
+<button id="sos-btn">SOS</button>
+
+<div id="sos-modal"><div class="sos-box"><h3>⚠ CONFIRM SOS</h3><p>Send an emergency alert to the dispatch channel?</p><div class="sos-actions"><button class="cancel" id="sos-cancel">CANCEL</button><button class="confirm" id="sos-confirm">SEND SOS</button></div></div></div>
+<div id="toast"></div>
+
 <script>
+/* =========================================================
+   ERLC CAD — SINGLE FILE EDITION
+   ใช้โค้ดเดิมเป็นฐาน + เพิ่มระบบ Calls/Units/Records/Local Save
+   ========================================================= */
 
-/*
-===========================================================
-BCPD CAD FRONTEND
-===========================================================
+const UNITS_SHEET_ID="11JrUuWvb1wgZJ4dEK-xo9b7ziqi7H4H0Zb2FVuIiB7Q";
+const DATABASE_SHEET_ID="1-6APHkfsmXqFHbwcw1cCm8yo_MYD1OzIRD7x8AeyXCk";
+const DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1490811672129175753/vEDTTyvqk1pskfw8QypBE6Ofpg-vyVW45x3Ybg4chbbfHBfFbx2UCnNvbCZ7roL6ahWd";
 
-IMPORTANT:
-ตอนนี้ API จะถูกเรียกผ่าน /api/*
-ดังนั้นไม่ต้องใส่ Supabase service role key ในไฟล์นี้
+const UNITS_COL={callsign:0,name:1,rank:2,status:3,pin:4};
+const DB_COL={name:0,plate:1,vtype:2,expiry:3,fines:4,license:5,gunpermit:6,notes:7};
 
-Backend endpoints ที่ frontend คาดหวัง:
+const ZONES=["Bank","Jewelry Store","Gas Station","Highway","Cayo Perico","Airport","Sheriff Office","Hospital","Convenience Store","Warehouse","Yacht","Ammunation","Casino","Train Station","Docks"];
+const INCIDENTS=["Robbery","Armed 10-90","Shootout","Roadblock breach","Suspicious person","Pursuit","Hostage situation","Reckless driving","Assault","Kidnapping","Grand theft auto","Officer down"];
 
-POST /api/login
-GET  /api/units
-PATCH /api/units/status
-GET  /api/calls
-POST /api/calls
-PATCH /api/calls/:id
-GET  /api/records?q=
-POST /api/sos
-===========================================================
-*/
-
-const LOCATIONS = [
-  "Bank",
-  "Jewelry Store",
-  "Gas Station",
-  "Highway",
-  "Cayo Perico",
-  "Airport",
-  "Sheriff Office",
-  "Hospital",
-  "Convenience Store",
-  "Warehouse",
-  "Yacht",
-  "Ammunation",
-  "Casino",
-  "Train Station",
-  "Docks"
+const DEMO_UNITS=[
+ {callsign:"1-ADAM-01",name:"Dispatch",rank:"Supervisor",status:"ONLINE",pin:"1234"},
+ {callsign:"2-ADAM-21",name:"Officer Demo",rank:"Police Officer",status:"ONLINE",pin:"2222"},
+ {callsign:"3-LINCOLN-05",name:"Unit Demo",rank:"Sheriff",status:"OFF DUTY",pin:"3333"}
 ];
 
-const INCIDENTS = [
-  "Robbery",
-  "Armed 10-90",
-  "Shootout",
-  "Roadblock breach",
-  "Suspicious person",
-  "Pursuit",
-  "Hostage situation",
-  "Reckless driving",
-  "Assault",
-  "Kidnapping",
-  "Grand theft auto",
-  "Officer down"
-];
+let currentUser=null,selectedZone=null,selectedIncident=null;
+let units=[],calls=[],records=[];
+let clockTimer=null,unitTimer=null;
 
-let user = null;
-let selectedLocation = "";
-let selectedIncident = "";
+const $=id=>document.getElementById(id);
+const store={
+ get(k,f=[]){try{return JSON.parse(localStorage.getItem("erlc_cad_"+k))??f}catch{return f}},
+ set(k,v){localStorage.setItem("erlc_cad_"+k,JSON.stringify(v))}
+};
 
-const $ = id => document.getElementById(id);
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function toast(msg,err=false){const t=$("toast");t.textContent=msg;t.className=err?"show err":"show";clearTimeout(toast.t);toast.t=setTimeout(()=>t.className="",3000)}
+function logLine(msg){const l=$("log-list");const d=document.createElement("div");d.className="log-line";d.innerHTML=`<span class="t">${new Date().toLocaleTimeString([], {hour12:false})}</span><span>${escapeHtml(msg)}</span>`;l.prepend(d);while(l.children.length>40)l.lastChild.remove()}
+function tickClock(){const n=new Date();$("clock-time").textContent=n.toLocaleTimeString([], {hour12:false});$("clock-date").textContent=n.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"})}
 
-function escapeHTML(value){
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+async function fetchSheetRows(id,tab){
+ const url=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
+ const r=await fetch(url);if(!r.ok)throw Error("Sheet "+r.status);
+ const txt=await r.text();const j=JSON.parse(txt.substring(txt.indexOf("(")+1,txt.lastIndexOf(")")));
+ return (j.table?.rows||[]).map(x=>(x.c||[]).map(c=>c?.v==null?"":String(c.v)));
 }
 
-function toast(message,error=false){
-  const el=$("toast");
-
-  el.textContent=message;
-  el.classList.toggle("error",error);
-  el.classList.add("show");
-
-  clearTimeout(toast.timer);
-
-  toast.timer=setTimeout(()=>{
-    el.classList.remove("show");
-  },3000);
-}
-
-function log(message){
-  const el=$("logs");
-
-  const row=document.createElement("div");
-
-  row.style.cssText=
-    "font:10px var(--mono);color:var(--muted);padding:6px 0;border-bottom:1px solid var(--line)";
-
-  row.innerHTML=
-    `<span style="color:var(--green)">
-      ${new Date().toLocaleTimeString()}
-    </span> ${escapeHTML(message)}`;
-
-  el.prepend(row);
-
-  while(el.children.length>15){
-    el.lastChild.remove();
-  }
-}
-
-async function api(url,options={}){
-  const response=await fetch(url,{
-    credentials:"include",
-    headers:{
-      "Content-Type":"application/json",
-      ...(options.headers||{})
-    },
-    ...options
-  });
-
-  let data=null;
-
-  try{
-    data=await response.json();
-  }catch{}
-
-  if(!response.ok){
-    throw new Error(data?.error || `HTTP ${response.status}`);
-  }
-
-  return data;
-}
-
-/* LOGIN */
-
-$("loginBtn").onclick=login;
-
-$("pin").addEventListener("keydown",e=>{
-  if(e.key==="Enter") login();
-});
+/* ---------- LOGIN: พยายามอ่าน Google Sheet ก่อน ถ้าไม่ได้ใช้ local demo ---------- */
+$("pin-input").addEventListener("input",()=>{const n=$("pin-input").value.length;document.querySelectorAll("#pin-dots i").forEach((x,i)=>x.classList.toggle("filled",i<n))});
+$("pin-input").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+$("login-btn").onclick=login;
 
 async function login(){
-
-  const pin=$("pin").value.trim();
-
-  if(!pin){
-    $("error").textContent="ENTER UNIT PIN";
-    return;
-  }
-
-  $("loginBtn").disabled=true;
-  $("loginBtn").textContent="VERIFYING...";
-  $("error").textContent="";
-
-  try{
-
-    const result=await api("/api/login",{
-      method:"POST",
-      body:JSON.stringify({pin})
-    });
-
-    user=result.officer;
-
-    $("login").style.display="none";
-    $("app").style.display="block";
-
-    $("user").innerHTML=
-      `<b>${escapeHTML(user.callsign)}</b> —
-       ${escapeHTML(user.name)}
-       <br>
-       <span>${escapeHTML(user.rank)}</span>`;
-
-    log(`${user.callsign} authenticated`);
-
-    await refreshAll();
-
-    toast(`WELCOME ${user.callsign}`);
-
-  }catch(error){
-
-    $("error").textContent=error.message;
-    $("pin").value="";
-
-  }finally{
-
-    $("loginBtn").disabled=false;
-    $("loginBtn").textContent="AUTHENTICATE";
-  }
+ const pin=$("pin-input").value.trim();$("login-error").textContent="";
+ if(!pin){$("login-error").textContent="Enter your unit PIN.";return}
+ $("login-btn").disabled=true;$("login-btn").textContent="VERIFYING...";
+ try{
+   let rows=[];
+   try{rows=await fetchSheetRows(UNITS_SHEET_ID,"Units")}catch(e){}
+   let m=rows.find(r=>(r[UNITS_COL.pin]||"").trim()===pin);
+   if(m) currentUser={callsign:m[0]||"—",name:m[1]||"—",rank:m[2]||"—"};
+   else{
+     const local=store.get("units",DEMO_UNITS);const lm=local.find(u=>String(u.pin)===pin);
+     if(!lm)throw Error("bad");
+     currentUser={callsign:lm.callsign,name:lm.name,rank:lm.rank};
+   }
+   enterApp();
+ }catch(e){
+   $("login-error").textContent="⚠ INVALID PIN";
+   $("pin-input").value="";document.querySelectorAll("#pin-dots i").forEach(x=>x.classList.remove("filled"));
+ }finally{$("login-btn").disabled=false;$("login-btn").textContent="SIGN IN"}
 }
 
-/* LOGOUT */
+function enterApp(){
+ $("login-screen").style.display="none";$("app").style.display="block";
+ $("whoami").innerHTML=`<b>${escapeHtml(currentUser.callsign)}</b><br><span class="rank-tag">${escapeHtml(currentUser.rank)}</span>`;
+ units=store.get("units",DEMO_UNITS);calls=store.get("calls",[]);records=store.get("records",[]);
+ buildButtons();renderAll();tickClock();clockTimer=setInterval(tickClock,1000);unitTimer=setInterval(loadUnits,30000);
+ logLine(`${currentUser.callsign} signed in`);toast(`WELCOME ${currentUser.callsign}`);
+}
 
-$("logout").onclick=async()=>{
-
-  user=null;
-
-  $("app").style.display="none";
-  $("login").style.display="flex";
-  $("pin").value="";
-
+$("logout-btn").onclick=()=>{
+ logLine(`${currentUser.callsign} signed out`);clearInterval(clockTimer);clearInterval(unitTimer);
+ currentUser=null;$("app").style.display="none";$("login-screen").style.display="flex";$("pin-input").value="";
+ document.querySelectorAll("#pin-dots i").forEach(x=>x.classList.remove("filled"));
 };
 
-/* CLOCK */
-
-function clock(){
-
-  const now=new Date();
-
-  $("time").textContent=
-    now.toLocaleTimeString("th-TH",{hour12:false});
-
-  $("date").textContent=
-    now.toLocaleDateString("th-TH",{
-      weekday:"short",
-      day:"numeric",
-      month:"short",
-      year:"numeric"
-    });
+function buildButtons(){
+ const zg=$("zone-grid"),ig=$("incident-grid");zg.innerHTML="";ig.innerHTML="";
+ ZONES.forEach(z=>{const b=document.createElement("button");b.className="pill-btn";b.textContent=z;b.onclick=()=>{selectedZone=z;[...zg.children].forEach(x=>x.classList.remove("selected"));b.classList.add("selected");$("sel-zone").textContent=z};zg.appendChild(b)});
+ INCIDENTS.forEach(i=>{const b=document.createElement("button");b.className="pill-btn incident";b.textContent=i;b.onclick=()=>{selectedIncident=i;[...ig.children].forEach(x=>x.classList.remove("selected"));b.classList.add("selected");$("sel-incident").textContent=i};ig.appendChild(b)});
+ $("zone-count").textContent=ZONES.length;$("incident-count").textContent=INCIDENTS.length;
 }
 
-clock();
-
-setInterval(clock,1000);
-
-/* LOCATION */
-
-LOCATIONS.forEach(location=>{
-
-  const button=document.createElement("button");
-
-  button.className="choice";
-
-  button.textContent=location;
-
-  button.onclick=()=>{
-
-    selectedLocation=location;
-
-    document.querySelectorAll("#locations .choice")
-      .forEach(x=>x.classList.remove("active"));
-
-    button.classList.add("active");
-
-    $("selectedLocation").textContent=location;
-  };
-
-  $("locations").appendChild(button);
-});
-
-/* INCIDENT */
-
-INCIDENTS.forEach(incident=>{
-
-  const button=document.createElement("button");
-
-  button.className="choice incident";
-
-  button.textContent=incident;
-
-  button.onclick=()=>{
-
-    selectedIncident=incident;
-
-    document.querySelectorAll("#incidents .choice")
-      .forEach(x=>x.classList.remove("active"));
-
-    button.classList.add("active");
-
-    $("selectedIncident").textContent=incident;
-  };
-
-  $("incidents").appendChild(button);
-});
-
-/* CREATE CALL */
-
-$("createCall").onclick=async()=>{
-
-  if(!selectedLocation || !selectedIncident){
-
-    toast("SELECT LOCATION AND INCIDENT",true);
-    return;
-  }
-
-  const button=$("createCall");
-
-  button.disabled=true;
-  button.textContent="CREATING...";
-
-  try{
-
-    const result=await api("/api/calls",{
-      method:"POST",
-      body:JSON.stringify({
-
-        location:selectedLocation,
-
-        incident:selectedIncident,
-
-        notes:$("notes").value.trim()
-
-      })
-    });
-
-    $("notes").value="";
-
-    log(`Created ${result.call?.call_id || "CALL"}`);
-
-    toast("DISPATCH CALL CREATED");
-
-    selectedLocation="";
-    selectedIncident="";
-
-    $("selectedLocation").textContent="NONE";
-    $("selectedIncident").textContent="NONE";
-
-    document
-      .querySelectorAll(".choice.active")
-      .forEach(x=>x.classList.remove("active"));
-
-    await refreshCalls();
-
-  }catch(error){
-
-    toast(error.message,true);
-
-  }finally{
-
-    button.disabled=false;
-    button.textContent="CREATE DISPATCH CALL";
-  }
-};
-
-/* CALLS */
-
-async function refreshCalls(){
-
-  try{
-
-    const result=await api("/api/calls");
-
-    const calls=result.calls||[];
-
-    $("statCalls").textContent=calls.length;
-    $("callCount").textContent=calls.length;
-
-    const container=$("calls");
-
-    container.innerHTML="";
-
-    if(!calls.length){
-
-      container.innerHTML=
-        `<div class="empty">NO ACTIVE CALLS</div>`;
-
-      return;
-    }
-
-    calls.forEach(call=>{
-
-      const el=document.createElement("div");
-
-      el.className="call";
-
-      el.innerHTML=`
-
-        <div class="call-top">
-
-          <span class="call-id">
-            ${escapeHTML(call.call_id)}
-          </span>
-
-          <span class="call-status">
-            ${escapeHTML(call.status)}
-          </span>
-
-        </div>
-
-        <div class="call-main">
-          ${escapeHTML(call.incident)}
-          @
-          ${escapeHTML(call.location)}
-        </div>
-
-        <div class="call-sub">
-          CREATED BY:
-          ${escapeHTML(call.created_by || "UNKNOWN")}
-        </div>
-
-        <div class="call-sub">
-          ${escapeHTML(call.notes || "No additional information")}
-        </div>
-
-        <div class="call-actions">
-
-          ${["ACCEPTED","EN_ROUTE","ON_SCENE","CLEARED"]
-            .map(status=>`
-              <button
-                data-id="${escapeHTML(call.id)}"
-                data-status="${status}">
-                ${status}
-              </button>
-            `).join("")}
-
-        </div>
-      `;
-
-      el.querySelectorAll(".call-actions button")
-        .forEach(button=>{
-
-          button.onclick=async()=>{
-
-            try{
-
-              await api(`/api/calls/${encodeURIComponent(button.dataset.id)}`,{
-                method:"PATCH",
-                body:JSON.stringify({
-                  status:button.dataset.status
-                })
-              });
-
-              toast(`CALL → ${button.dataset.status}`);
-
-              log(
-                `${call.call_id} → ${button.dataset.status}`
-              );
-
-              await refreshCalls();
-
-            }catch(error){
-
-              toast(error.message,true);
-
-            }
-
-          };
-
-        });
-
-      container.appendChild(el);
-    });
-
-  }catch(error){
-
-    $("calls").innerHTML=
-      `<div class="empty">
-        FAILED TO LOAD CALLS
-      </div>`;
-
-  }
+/* ---------- UNITS ---------- */
+async function loadUnits(){
+ try{
+  const rows=await fetchSheetRows(UNITS_SHEET_ID,"Units");
+  if(rows.length) units=rows.map(r=>({callsign:r[0]||"—",name:r[1]||"—",rank:r[2]||"—",status:r[3]||"OFF DUTY",pin:r[4]||""}));
+ }catch(e){}
+ store.set("units",units);renderUnits();
+}
+function renderUnits(){
+ const list=$("units-list");list.innerHTML="";
+ let online=0;
+ units.forEach((u,i)=>{
+  const st=String(u.status).toUpperCase();const onlineNow=/ONLINE|ON DUTY|10-8/.test(st);const busy=/BUSY|10-6|EN ROUTE/.test(st);
+  if(onlineNow||busy)online++;
+  const d=document.createElement("div");d.className="unit-row";
+  d.innerHTML=`<div><span class="unit-dot ${busy?"busy":onlineNow?"on":"off"}"></span><b>${escapeHtml(u.callsign)}</b></div><div class="unit-role">${escapeHtml(u.rank)} · ${escapeHtml(st)}</div>`;
+  list.appendChild(d);
+ });
+ $("units-count").textContent=`${online} online`;$("stat-units").textContent=online;
 }
 
-/* UNITS */
-
-async function refreshUnits(){
-
-  try{
-
-    const result=await api("/api/units");
-
-    const units=result.units||[];
-
-    const online=units.filter(unit=>
-      unit.status==="10-8" ||
-      unit.status==="BUSY"
-    );
-
-    $("statUnits").textContent=online.length;
-    $("statOnline").textContent=online.length;
-    $("unitCount").textContent=`${online.length} ONLINE`;
-
-    const container=$("units");
-
-    container.innerHTML="";
-
-    if(!units.length){
-
-      container.innerHTML=
-        `<div class="empty">NO UNITS</div>`;
-
-      return;
-    }
-
-    units.forEach(unit=>{
-
-      const onlineStatus=
-        unit.status==="10-8" ? "online":
-        unit.status==="BUSY" ? "busy":"";
-
-      const el=document.createElement("div");
-
-      el.className="unit";
-
-      el.innerHTML=`
-
-        <div class="unit-left">
-
-          <span class="dot ${onlineStatus}"></span>
-
-          <div>
-
-            <div class="unit-name">
-              ${escapeHTML(unit.callsign)}
-            </div>
-
-            <div class="unit-rank">
-              ${escapeHTML(unit.rank)}
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="unit-rank">
-          ${escapeHTML(unit.status)}
-        </div>
-      `;
-
-      container.appendChild(el);
-
-    });
-
-  }catch(error){
-
-    $("units").innerHTML=
-      `<div class="empty">FAILED TO LOAD ROSTER</div>`;
-  }
+/* ---------- DISPATCH CALLS ---------- */
+$("send-report-btn").onclick=createCall;
+function createCall(){
+ const notes=$("report-notes").value.trim();if(!selectedZone||!selectedIncident){$("report-status").style.color="var(--red)";$("report-status").textContent="Select location and incident first.";return}
+ const c={id:"CAD-"+Date.now().toString(36).toUpperCase(),zone:selectedZone,incident:selectedIncident,notes,unit:currentUser.callsign,createdAt:new Date().toISOString(),status:"ACTIVE"};
+ calls.unshift(c);store.set("calls",calls);$("report-notes").value="";$("report-status").style.color="var(--green)";$("report-status").textContent=`CALL ${c.id} CREATED`;
+ renderCalls();toast("DISPATCH CALL CREATED");logLine(`${c.id} — ${c.incident} @ ${c.zone}`);
+ sendDiscord("🚨 NEW DISPATCH CALL",c,0x38ffa0);
+}
+function renderCalls(){
+ const box=$("calls-list");box.innerHTML="";const active=calls.filter(c=>c.status==="ACTIVE");
+ $("calls-count").textContent=active.length;$("stat-calls").textContent=active.length;$("stat-reports").textContent=calls.length;
+ if(!active.length){box.innerHTML='<div style="font:10px var(--mono);color:var(--dim)">NO ACTIVE CALLS</div>';return}
+ active.slice(0,15).forEach(c=>{
+  const d=document.createElement("div");d.className="call";d.innerHTML=`<div class="call-top"><span>${escapeHtml(c.incident)}</span><span style="color:var(--amber)">${escapeHtml(c.id)}</span></div><div class="call-meta">📍 ${escapeHtml(c.zone)} · UNIT ${escapeHtml(c.unit)}<br>${escapeHtml(c.notes||"No additional notes")}</div><div class="call-actions"><button data-id="${c.id}" data-act="assign">MARK ASSIGNED</button><button data-id="${c.id}" data-act="close">CLOSE CALL</button></div>`;
+  d.querySelectorAll("button").forEach(b=>b.onclick=()=>{const x=calls.find(z=>z.id===b.dataset.id);if(!x)return;if(b.dataset.act==="close")x.status="CLOSED";else x.status="ASSIGNED";store.set("calls",calls);renderCalls();logLine(`${x.id} marked ${x.status}`);toast(`${x.id} ${x.status}`)});
+  box.appendChild(d)
+ })
 }
 
-/* STATUS */
-
-document.querySelectorAll("[data-status]")
-  .forEach(button=>{
-
-    button.onclick=async()=>{
-
-      const status=button.dataset.status;
-
-      try{
-
-        await api("/api/units/status",{
-          method:"PATCH",
-          body:JSON.stringify({status})
-        });
-
-        user.status=status;
-
-        toast(`STATUS → ${status}`);
-
-        log(`Status changed to ${status}`);
-
-        await refreshUnits();
-
-      }catch(error){
-
-        toast(error.message,true);
-
-      }
-
-    };
-
-  });
-
-/* RECORD SEARCH */
-
-$("searchBtn").onclick=searchRecords;
-
-$("search").addEventListener("keydown",e=>{
-  if(e.key==="Enter") searchRecords();
-});
-
-async function searchRecords(){
-
-  const q=$("search").value.trim();
-
-  if(!q){
-
-    $("records").innerHTML=
-      `<div class="empty">ENTER NAME OR PLATE</div>`;
-
-    return;
-  }
-
-  $("records").innerHTML=
-    `<div class="empty">SEARCHING...</div>`;
-
-  try{
-
-    const result=await api(
-      `/api/records?q=${encodeURIComponent(q)}`
-    );
-
-    const records=result.records||[];
-
-    $("records").innerHTML="";
-
-    if(!records.length){
-
-      $("records").innerHTML=
-        `<div class="empty">NO RECORDS FOUND</div>`;
-
-      return;
-    }
-
-    records.forEach(record=>{
-
-      const el=document.createElement("div");
-
-      el.className="record";
-
-      el.innerHTML=`
-
-        <div class="record-name">
-          ${escapeHTML(record.name)}
-        </div>
-
-        <div class="record-grid">
-
-          <div>
-            PLATE:
-            <b>${escapeHTML(record.plate)}</b>
-          </div>
-
-          <div>
-            VEHICLE:
-            <b>${escapeHTML(record.vehicle_type)}</b>
-          </div>
-
-          <div>
-            LICENSE:
-            <b>${escapeHTML(record.license_status)}</b>
-          </div>
-
-          <div>
-            GUN PERMIT:
-            <b>${escapeHTML(record.gun_permit)}</b>
-          </div>
-
-          <div>
-            FINES:
-            <b>${escapeHTML(record.fines)}</b>
-          </div>
-
-          <div>
-            EXPIRY:
-            <b>${escapeHTML(record.expiry)}</b>
-          </div>
-
-        </div>
-      `;
-
-      $("records").appendChild(el);
-    });
-
-    log(`Records search: ${q}`);
-
-  }catch(error){
-
-    $("records").innerHTML=
-      `<div class="empty">
-        ${escapeHTML(error.message)}
-      </div>`;
-  }
+/* ---------- RECORDS ---------- */
+$("search-btn").onclick=runSearch;$("search-input").onkeydown=e=>{if(e.key==="Enter")runSearch()};
+async function runSearch(){
+ const q=$("search-input").value.trim().toLowerCase();$("search-results").innerHTML="";
+ if(!q){$("search-status").textContent="Type a name or plate.";return}
+ $("search-status").textContent="SEARCHING...";
+ let rows=[];
+ try{rows=await fetchSheetRows(DATABASE_SHEET_ID,"Sheet1")}catch(e){}
+ if(!rows.length)rows=records.map(r=>[r.name,r.plate,r.vtype,r.expiry,r.fines,r.license,r.gunpermit,r.notes]);
+ const m=rows.filter(r=>(r[0]||"").toLowerCase().includes(q)||(r[1]||"").toLowerCase().includes(q));
+ $("search-status").textContent=`${m.length} record(s) found`;
+ m.slice(0,25).forEach(r=>{
+  const d=document.createElement("div");d.className="record";const fine=r[4]||"0";const bad=parseFloat(String(fine).replace(/[^0-9.]/g,""))>0;
+  d.innerHTML=`<div class="rname">${escapeHtml(r[0]||"Unknown")}</div><div class="record-grid"><div>Plate: <b>${escapeHtml(r[1]||"—")}</b></div><div>Vehicle: <b>${escapeHtml(r[2]||"—")}</b></div><div>Expiry: <b>${escapeHtml(r[3]||"—")}</b></div><div>Fines: <b class="${bad?"flag-bad":"flag-ok"}">${escapeHtml(fine)}</b></div><div>License: <b>${escapeHtml(r[5]||"—")}</b></div><div>Gun permit: <b>${escapeHtml(r[6]||"—")}</b></div></div>`;
+  $("search-results").appendChild(d)
+ });
+ logLine(`Search "${q}" — ${m.length} match(es)`);
 }
 
-/* SOS */
-
-$("sos").onclick=async()=>{
-
-  if(!user) return;
-
-  const confirmed=confirm(
-    "SEND SOS TO ALL ACTIVE UNITS?"
-  );
-
-  if(!confirmed) return;
-
-  try{
-
-    await api("/api/sos",{
-      method:"POST",
-      body:JSON.stringify({
-        location:selectedLocation || "UNKNOWN"
-      })
-    });
-
-    toast("SOS SENT TO DISPATCH");
-
-    log("SOS PANIC BUTTON ACTIVATED");
-
-  }catch(error){
-
-    toast(error.message,true);
-
-  }
-};
-
-/* REFRESH */
-
-async function refreshAll(){
-
-  await Promise.all([
-    refreshUnits(),
-    refreshCalls()
-  ]);
+/* ---------- DISCORD ---------- */
+async function sendDiscord(title,c,color){
+ try{
+  await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[{title,color,fields:[{name:"Location",value:c.zone||"—",inline:true},{name:"Incident",value:c.incident||"—",inline:true},{name:"Unit",value:c.unit||currentUser?.callsign||"—",inline:false},{name:"Notes",value:c.notes||"—",inline:false}],timestamp:new Date().toISOString()}]})});
+ }catch(e){console.warn("Discord unavailable",e)}
 }
 
-setInterval(()=>{
+/* ---------- SOS ---------- */
+$("sos-btn").onclick=()=>{if(currentUser)$("sos-modal").style.display="flex"};
+$("sos-cancel").onclick=()=>{$("sos-modal").style.display="none"};
+$("sos-confirm").onclick=async()=>{ $("sos-modal").style.display="none";const c={zone:selectedZone||"Not set",incident:"SOS — OFFICER NEEDS ASSISTANCE",unit:currentUser.callsign,notes:"PANIC BUTTON"};await sendDiscord("🆘 SOS — OFFICER NEEDS ASSISTANCE",c,0xff3b3b);toast("SOS SENT");logLine(`⚠ SOS sent by ${currentUser.callsign}`)};
+document.onkeydown=e=>{if(e.shiftKey&&e.key.toLowerCase()==="s"&&currentUser){e.preventDefault();$("sos-modal").style.display="flex"}if(e.key==="Escape")$("sos-modal").style.display="none"};
 
-  if(user){
-    refreshUnits();
-    refreshCalls();
-  }
-
-},5000);
-
+function renderAll(){renderUnits();renderCalls()}
 </script>
-
 </body>
-</html>
+</html>'''
+
+path = "/mnt/data/index.html"
+Path(path).write_text(html, encoding="utf-8")
+print(path)
