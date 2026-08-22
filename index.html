@@ -3,131 +3,681 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ศูนย์วิทยุสื่อสาร BCPD - BIT CITIES</title>
+    <title>BCPD Real-Time CAD & Emergency Dispatch System</title>
+    <!-- Font Awesome & Google Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #38bdf8; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #334155; padding-bottom: 15px; margin-bottom: 25px; }
-        .header h1 { margin: 0; color: var(--accent); letter-spacing: 1px; font-size: 1.8rem; }
-        .status-box { background: #000; padding: 8px 16px; border-radius: 5px; border: 1px solid var(--accent); color: #22c55e; font-weight: bold; }
+        :root {
+            --bg-dark: #080c14;
+            --panel-bg: #0f172a;
+            --panel-border: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-gold: #fbbf24;
+            --status-green: #22c55e;
+            --status-red: #ef4444;
+            --status-yellow: #eab308;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { background-color: var(--card); border-radius: 10px; padding: 20px; border: 1px solid #334155; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .card h2 { margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #334155; color: #94a3b8; font-size: 1.1rem; text-transform: uppercase; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; color: #64748b; padding-bottom: 10px; font-size: 0.9rem; }
-        td { padding: 10px 0; border-bottom: 1px solid #334155; font-size: 0.95rem; }
-        
-        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; display: inline-block; }
-        .s-10-8 { background: #15803d; color: #fff; }
-        .s-10-6 { background: #b91c1c; color: #fff; }
-        .s-10-23 { background: #a16207; color: #fff; }
-        .s-default { background: #475569; color: #fff; }
-        
-        .call-item { background: #334155; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #ef4444; }
-        .refresh-btn { background: var(--accent); color: #000; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Sarabun', sans-serif;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        /* --- LOGIN OVERLAY --- */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(8, 12, 20, 0.96);
+            backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000;
+        }
+
+        .login-box {
+            background: var(--panel-bg);
+            border: 2px solid var(--accent-blue);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.25);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .login-box .badge-icon {
+            font-size: 3.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+        }
+
+        .login-box h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .login-box p {
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+
+        .field-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .field-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #020617;
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .field-group input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-submit-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4);
+        }
+
+        /* --- DASHBOARD HEADER --- */
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--panel-border);
+            margin-bottom: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section i {
+            font-size: 2.2rem;
+            color: var(--accent-gold);
+        }
+
+        .logo-section h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-section span {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            display: block;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .user-status-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .clock-display {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem;
+            background: #020617;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--panel-border);
+            color: var(--accent-blue);
+        }
+
+        .officer-badge {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--status-red);
+            color: var(--status-red);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover { background: var(--status-red); color: #fff; }
+
+        /* --- STATS COUNTER --- */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            padding: 18px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-card .info h4 {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-bottom: 5px;
+        }
+
+        .stat-card .info .val {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .stat-card .icon-box {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+
+        /* --- MAIN CONTENT LAYOUT --- */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid { grid-template-columns: 1fr; }
+        }
+
+        .panel-box {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .panel-head h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-dot {
+            width: 8px; height: 8px;
+            background-color: var(--status-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--status-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* TABLE STYLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            color: var(--text-sub);
+            font-size: 0.8rem;
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--panel-border);
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #1e293b;
+            font-size: 0.9rem;
+        }
+
+        .status-tag {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .st-10-8 { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid #22c55e; }
+        .st-10-6 { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef4444; }
+        .st-10-23 { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid #eab308; }
+
+        /* INCIDENT CARDS */
+        .incident-card {
+            background: #020617;
+            border: 1px solid var(--panel-border);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+        }
+
+        .incident-title {
+            font-weight: 700;
+            color: var(--status-red);
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .incident-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-top: 5px;
+        }
+
+        /* DISCORD DISPATCH FORM */
+        .discord-dispatch-box {
+            background: #020617;
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .btn-send-discord {
+            width: 100%;
+            padding: 12px;
+            background: #5865F2;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-send-discord:hover {
+            background: #4752C4;
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>ศูนย์วิทยุสื่อสาร BCPD</h1>
-        <div class="status-box">🟢 ข่ายวิทยุออนไลน์</div>
+
+    <!-- 1. LOGIN OVERLAY SCREEN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <i class="fa-solid fa-shield-halved badge-icon"></i>
+            <h2>BCPD CAD SYSTEM</h2>
+            <p>ศูนย์ปฏิบัติการสื่อสารและควบคุมสถานการณ์ BCPD</p>
+
+            <div class="field-group">
+                <label><i class="fa-solid fa-id-badge"></i> รหัสเรียกขาน (Callsign)</label>
+                <input type="text" id="input-callsign" placeholder="เช่น BCPD-01">
+            </div>
+
+            <div class="field-group">
+                <label><i class="fa-solid fa-user-shield"></i> ชื่อผู้ปฏิบัติการ (Officer Name)</label>
+                <input type="text" id="input-name" placeholder="ระบุชื่อเจ้าหน้าที่">
+            </div>
+
+            <button class="btn-submit-login" onclick="loginSystem()">
+                <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบศูนย์วิทยุ
+            </button>
+        </div>
     </div>
 
-    <button class="refresh-btn" onclick="loadData()">🔄 อัปเดตข้อมูลวิทยุ</button>
+    <!-- 2. MAIN DASHBOARD WRAPPER -->
+    <div id="main-dashboard" style="display: none;">
+        <!-- HEADER -->
+        <div class="header-nav">
+            <div class="logo-section">
+                <i class="fa-solid fa-tower-cell"></i>
+                <div>
+                    <h1>BCPD DISPATCH CONTROL CENTER</h1>
+                    <span>REAL-TIME EMERGENCY SYSTEM • AUTOMATED</span>
+                </div>
+            </div>
 
-    <div class="dashboard">
-        <!-- กำลังพลในข่าย -->
-        <div class="card">
-            <h2>กำลังพลในข่าย (Active Units)</h2>
-            <table>
-                <thead>
-                    <tr><th>รหัสเรียกขาน</th><th>ชื่อปฏิบัติการ</th><th>สถานะ</th></tr>
-                </thead>
-                <tbody id="units-list">
-                    <tr><td colspan="3">กำลังโหลดข้อมูล...</td></tr>
-                </tbody>
-            </table>
+            <div class="user-status-bar">
+                <div class="clock-display" id="live-clock">00:00:00</div>
+                <div class="officer-badge" id="officer-tag">👮 DISPATCHER</div>
+                <button class="btn-logout" onclick="logoutSystem()" title="ออกจากระบบ">
+                    <i class="fa-solid fa-power-off"></i>
+                </button>
+            </div>
         </div>
 
-        <!-- รับแจ้งเหตุ -->
-        <div class="card">
-            <h2>รับแจ้งเหตุ (Active Calls)</h2>
-            <div id="calls-list">
-                <div>กำลังโหลดข้อมูล...</div>
+        <!-- STATS -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="info">
+                    <h4>กำลังพลทั้งหมด</h4>
+                    <div class="val" id="cnt-total" style="color: var(--accent-blue);">0</div>
+                </div>
+                <i class="fa-solid fa-users icon-box" style="color: var(--accent-blue);"></i>
+            </div>
+            <div class="stat-card">
+                <div class="info">
+                    <h4>10-8 พร้อมปฏิบัติงาน</h4>
+                    <div class="val" id="cnt-108" style="color: var(--status-green);">0</div>
+                </div>
+                <i class="fa-solid fa-circle-check icon-box" style="color: var(--status-green);"></i>
+            </div>
+            <div class="stat-card">
+                <div class="info">
+                    <h4>10-6 ติดภารกิจ</h4>
+                    <div class="val" id="cnt-106" style="color: var(--status-red);">0</div>
+                </div>
+                <i class="fa-solid fa-circle-xmark icon-box" style="color: var(--status-red);"></i>
+            </div>
+            <div class="stat-card">
+                <div class="info">
+                    <h4>10-23 ถึงจุดเกิดเหตุ</h4>
+                    <div class="val" id="cnt-1023" style="color: var(--status-yellow);">0</div>
+                </div>
+                <i class="fa-solid fa-location-dot icon-box" style="color: var(--status-yellow);"></i>
+            </div>
+        </div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="content-grid">
+            <!-- LEFT: UNITS ACTIVE TABLE -->
+            <div class="panel-box">
+                <div class="panel-head">
+                    <h3><i class="fa-solid fa-list-check"></i> ตารางสถานะกำลังพล (Real-Time Auto Update)</h3>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-sub);">
+                        <div class="live-dot"></div> SYNCING
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CALLSIGN</th>
+                            <th>ชื่อเจ้าหน้าที่</th>
+                            <th>ยศ / ตำแหน่ง</th>
+                            <th>สถานะวิทยุ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="unit-table-rows">
+                        <tr><td colspan="4" style="text-align: center; color: var(--text-sub);">กำลังเชื่อมต่อข้อมูล Google Sheets...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RIGHT: INCIDENTS & DISCORD -->
+            <div class="panel-box">
+                <div class="panel-head">
+                    <h3><i class="fa-solid fa-triangle-exclamation"></i> เหตุการณ์แจ้งเตือน (Calls)</h3>
+                </div>
+
+                <div id="incidents-list">
+                    <div style="color: var(--text-sub); font-size: 0.85rem;">กำลังโหลดข้อมูลเหตุ...</div>
+                </div>
+
+                <!-- DISCORD DISPATCH ACTION -->
+                <div class="discord-dispatch-box">
+                    <h4 style="font-size: 0.9rem; color: var(--accent-blue); margin-bottom: 10px;">
+                        <i class="fa-brands fa-discord"></i> ส่งวิทยุแจ้งเหตุเข้า Discord BCPD
+                    </h4>
+                    
+                    <div class="field-group" style="margin-bottom: 10px;">
+                        <input type="text" id="dc-title" placeholder="เหตุการณ์ (เช่น 10-10 ปล้นธนาคาร / ยิงปะทะ)">
+                    </div>
+                    <div class="field-group" style="margin-bottom: 10px;">
+                        <input type="text" id="dc-location" placeholder="สถานที่เกิดเหตุ / พิกัด">
+                    </div>
+                    <div class="field-group" style="margin-bottom: 10px;">
+                        <input type="text" id="dc-details" placeholder="รายละเอียดเพิ่มเติม / กำลังเสริมที่ต้องการ">
+                    </div>
+
+                    <button class="btn-send-discord" onclick="dispatchToDiscord()">
+                        <i class="fa-brands fa-discord"></i> ยิงแจ้งเตือน Embed ลง Discord
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- CORE JAVASCRIPT LOGIC -->
     <script>
-        const SHEET_ID = '11JrUuWvb1wgZJ4dEK-xo9b7ziqi7H4H0Zb2FVuIiB7Q';
-        
-        function getBadgeClass(status) {
-            if (!status) return 's-default';
-            if (status.includes('10-8')) return 's-10-8';
-            if (status.includes('10-6')) return 's-10-6';
-            if (status.includes('10-23')) return 's-10-23';
-            return 's-default';
+        // CONFIG
+        const GOOGLE_SHEET_ID = '11JrUuWvb1wgZJ4dEK-xo9b7ziqi7H4H0Zb2FVuIiB7Q';
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1490811672129175753/vEDTTyvqk1pskfw8QypBE6Ofpg-vyVW45x3Ybg4chbbfHBfFbx2UCnNvbCZ7roL6ahWd';
+
+        // 1. LIVE CLOCK
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toTimeString().split(' ')[0];
+        }, 1000);
+
+        // 2. AUTH SYSTEM
+        function loginSystem() {
+            const cs = document.getElementById('input-callsign').value.trim();
+            const nm = document.getElementById('input-name').value.trim();
+
+            if(!cs || !nm) {
+                alert('กรุณากรอกข้อมูล Callsign และ ชื่อเจ้าหน้าที่ให้เรียบร้อย!');
+                return;
+            }
+
+            localStorage.setItem('bcpd_session', JSON.stringify({ callsign: cs, name: nm }));
+            checkAuth();
         }
 
-        async function loadData() {
-            try {
-                // ดึงข้อมูล Units
-                const resUnits = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
-                const textUnits = await resUnits.text();
-                const jsonUnits = JSON.parse(textUnits.substring(47, textUnits.length - 2));
-                const rowsUnits = jsonUnits.table.rows;
-
-                let unitsHTML = '';
-                rowsUnits.forEach((row, index) => {
-                    if (index === 0 && row.c[0]?.v === 'Callsign') return; // ข้ามหัวตาราง
-                    const callsign = row.c[0] ? row.c[0].v : '-';
-                    const name = row.c[1] ? row.c[1].v : '-';
-                    const status = row.c[2] ? row.c[2].v : '10-8';
-                    
-                    unitsHTML += `
-                        <tr>
-                            <td><b>${callsign}</b></td>
-                            <td>${name}</td>
-                            <td><span class="badge ${getBadgeClass(status)}">${status}</span></td>
-                        </tr>
-                    `;
-                });
-                document.getElementById('units-list').innerHTML = unitsHTML || '<tr><td colspan="3">ไม่มีข้อมูลกำลังพล</td></tr>';
-
-                // ดึงข้อมูล Calls
-                const resCalls = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Calls`);
-                const textCalls = await resCalls.text();
-                const jsonCalls = JSON.parse(textCalls.substring(47, textCalls.length - 2));
-                const rowsCalls = jsonCalls.table.rows;
-
-                let callsHTML = '';
-                rowsCalls.forEach((row, index) => {
-                    if (index === 0 && row.c[0]?.v === 'CaseID') return; // ข้ามหัวตาราง
-                    const caseId = row.c[0] ? row.c[0].v : '-';
-                    const incident = row.c[1] ? row.c[1].v : '-';
-                    const location = row.c[2] ? row.c[2].v : '-';
-                    const status = row.c[3] ? row.c[3].v : 'Active';
-
-                    callsHTML += `
-                        <div class="call-item">
-                            <div style="color: #f87171; font-weight: bold;">[${caseId}] ${incident}</div>
-                            <div style="font-size: 0.85rem; margin-top: 5px;">📍 สถานที่: ${location} | สถานะ: ${status}</div>
-                        </div>
-                    `;
-                });
-                document.getElementById('calls-list').innerHTML = callsHTML || '<div>ไม่มีเหตุการณ์แจ้งในขณะนี้</div>';
-
-            } catch (err) {
-                console.error(err);
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('bcpd_session'));
+            if(session) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-dashboard').style.display = 'block';
+                document.getElementById('officer-tag').innerText = `👮 ${session.callsign} | ${session.name}`;
+                
+                // START AUTOMATED REAL-TIME LOOP
+                startAutoSync();
             }
         }
 
-        // โหลดข้อมูลทันทีเมื่อเปิดหน้าเว็บ
-        loadData();
-        // อัปเดตข้อมูลอัตโนมัติทุกๆ 15 วินาที
-        setInterval(loadData, 15000);
+        function logoutSystem() {
+            localStorage.removeItem('bcpd_session');
+            location.reload();
+        }
+
+        // 3. REAL-TIME GOOGLE SHEETS FETCHING (NO REFRESH BUTTON NEEDED)
+        async function syncSheetData() {
+            try {
+                // FETCH UNITS
+                const resU = await fetch(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Units`);
+                const txtU = await resU.text();
+                const jsonU = JSON.parse(txtU.substring(47, txtU.length - 2));
+
+                let rowsHtml = '', total = 0, c108 = 0, c106 = 0, c1023 = 0;
+
+                jsonU.table.rows.forEach((row, idx) => {
+                    if(idx === 0 && row.c[0]?.v?.toLowerCase().includes('callsign')) return;
+                    
+                    const cs = row.c[0]?.v || '-';
+                    const name = row.c[1]?.v || '-';
+                    const status = row.c[2]?.v || '10-8';
+                    const rank = row.c[3]?.v || 'Officer';
+
+                    if(cs !== '-') {
+                        total++;
+                        let stClass = 'st-10-8';
+
+                        if(status.includes('10-8')) c108++;
+                        else if(status.includes('10-6')) { c106++; stClass = 'st-10-6'; }
+                        else if(status.includes('10-23')) { c1023++; stClass = 'st-10-23'; }
+
+                        rowsHtml += `<tr>
+                            <td><b style="color: var(--accent-blue);">${cs}</b></td>
+                            <td><b>${name}</b></td>
+                            <td style="color: var(--text-sub);">${rank}</td>
+                            <td><span class="status-tag ${stClass}">${status}</span></td>
+                        </tr>`;
+                    }
+                });
+
+                document.getElementById('cnt-total').innerText = total;
+                document.getElementById('cnt-108').innerText = c108;
+                document.getElementById('cnt-106').innerText = c106;
+                document.getElementById('cnt-1023').innerText = c1023;
+                document.getElementById('unit-table-rows').innerHTML = rowsHtml || '<tr><td colspan="4" style="text-align:center;">ไม่มีข้อมูลเจ้าหน้าที่ในข่าย</td></tr>';
+
+                // FETCH CALLS
+                const resC = await fetch(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=Calls`);
+                const txtC = await resC.text();
+                const jsonC = JSON.parse(txtC.substring(47, txtC.length - 2));
+
+                let callsHtml = '';
+                jsonC.table.rows.forEach((row, idx) => {
+                    if(idx === 0 && row.c[0]?.v?.toLowerCase().includes('caseid')) return;
+                    if(row.c[0]?.v) {
+                        callsHtml += `<div class="incident-card">
+                            <div class="incident-title">
+                                <span>🚨 [${row.c[0]?.v}] ${row.c[1]?.v}</span>
+                            </div>
+                            <div class="incident-desc">📍 สถานที่: ${row.c[2]?.v}</div>
+                            <div class="incident-desc" style="color: var(--accent-blue);">สถานะ: ${row.c[3]?.v}</div>
+                        </div>`;
+                    }
+                });
+
+                document.getElementById('incidents-list').innerHTML = callsHtml || '<div style="color: var(--text-sub);">ไม่มีเหตุการณ์ด่วนในขณะนี้</div>';
+
+            } catch(err) {
+                console.error("Data Sync Error:", err);
+            }
+        }
+
+        function startAutoSync() {
+            syncSheetData();
+            setInterval(syncSheetData, 3000); // ดึงข้อมูลใหม่อัตโนมัติทุกๆ 3 วินาที
+        }
+
+        // 4. DISCORD EMBED DISPATCH AUTOMATION
+        async function dispatchToDiscord() {
+            const title = document.getElementById('dc-title').value.trim();
+            const location = document.getElementById('dc-location').value.trim();
+            const details = document.getElementById('dc-details').value.trim() || 'ไม่มีระบุรายละเอียดเพิ่มเติม';
+            const user = JSON.parse(localStorage.getItem('bcpd_session'));
+
+            if(!title || !location) {
+                alert('กรุณากรอกเหตุการณ์และสถานที่เกิดเหตุก่อนส่งสัญญาณวิทยุ!');
+                return;
+            }
+
+            const embedPayload = {
+                username: "BCPD Dispatch Radio System",
+                avatar_url: "https://cdn-icons-png.flaticon.com/512/2067/2067824.png",
+                embeds: [{
+                    title: "🚨 [DISPATCH EMERGENCY] แจ้งเหตุรุกราน / ด่วนที่สุด",
+                    color: 15548997, // สีแดง
+                    fields: [
+                        { name: "📌 เหตุการณ์ (Incident)", value: `\`\`\`${title}\`\`\``, inline: false },
+                        { name: "📍 สถานที่เกิดเหตุ (Location)", value: `\`\`\`${location}\`\`\``, inline: true },
+                        { name: "👮 ผู้สั่งการ (Dispatcher)", value: `${user.callsign} | ${user.name}`, inline: true },
+                        { name: "📝 รายละเอียด / ข้อความสั่งการ", value: details, inline: false }
+                    ],
+                    footer: { text: "BCPD Communications Division • BIT CITES POLICE DEPARTMENT" },
+                    timestamp: new Date()
+                }]
+            };
+
+            try {
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(embedPayload)
+                });
+
+                alert('ส่งสัญญาณวิทยุและแจ้งเตือน Embed ลง Discord BCPD สำเร็จ!');
+                document.getElementById('dc-title').value = '';
+                document.getElementById('dc-location').value = '';
+                document.getElementById('dc-details').value = '';
+
+            } catch(e) {
+                alert('เกิดข้อผิดพลาดในการส่ง Webhook กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+            }
+        }
+
+        // INITIAL CHECK
+        checkAuth();
     </script>
 </body>
 </html>
