@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCPD COMMUNICATION CENTER</title>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #334155; padding-bottom: 10px; margin-bottom: 20px; }
+        .status-online { color: #22c55e; font-weight: bold; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 20px; }
+        .card { background-color: #1e293b; border-radius: 8px; padding: 15px; border: 1px solid #334155; }
+        .card h2 { font-size: 1.1rem; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-top: 0; }
+        .unit-item, .log-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #0f172a; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
+        .bg-10-8 { background-color: #15803d; color: white; }
+        .bg-10-6 { background-color: #b91c1c; color: white; }
+        .bg-10-23 { background-color: #a16207; color: white; }
+        .call-card { background-color: #334155; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>BCPD COMMUNICATION CENTER</h1>
+        <span class="status-online">🟢 DISPATCH ONLINE</span>
+    </div>
+
+    <div class="grid-container">
+        <!-- ACTIVE UNITS -->
+        <div class="card">
+            <h2>ACTIVE UNITS</h2>
+            <div class="unit-item">
+                <span>👮 BCPD-21</span>
+                <span class="badge bg-10-8">10-8 ว่าง</span>
+            </div>
+            <div class="unit-item">
+                <span>👮 BCPD-24</span>
+                <span class="badge bg-10-6">10-6 ปฏิบัติงาน</span>
+            </div>
+            <div class="unit-item">
+                <span>👮 BCPD-31</span>
+                <span class="badge bg-10-23">10-23 ถึงจุดเกิดเหตุ</span>
+            </div>
+        </div>
+
+        <!-- ACTIVE CALLS -->
+        <div class="card">
+            <h2>ACTIVE CALLS</h2>
+            <div class="call-card">
+                <div style="color: #ef4444; font-weight: bold;">🚨 #001 ทะเลาะวิวาท</div>
+                <div>📍 จุดเกิดเหตุ: Downtown</div>
+                <div>👮 หน่วยที่รับผิดชอบ: BCPD-24</div>
+            </div>
+        </div>
+
+        <!-- RADIO LOG -->
+        <div class="card">
+            <h2>RADIO LOG</h2>
+            <div class="log-item"><span>22:51</span> <span>BCPD-21</span> <span class="badge bg-10-8">10-8</span></div>
+            <div class="log-item"><span>22:53</span> <span>BCPD-24</span> <span class="badge bg-10-6">10-6</span></div>
+            <div class="log-item"><span>22:55</span> <span>BCPD-31</span> <span class="badge bg-10-23">10-23</span></div>
+        </div>
+    </div>
+</body>
+</html>
