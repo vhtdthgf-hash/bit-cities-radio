@@ -1,145 +1,162 @@
 from pathlib import Path
 
-html = r'''<!DOCTYPE html>
+p = Path("/mnt/data/index.html")
+html = p.read_text(encoding="utf-8")
+
+# This is a complete replacement, designed to run as a single static HTML file.
+# It keeps the original Google Sheets/Discord approach, but adds a much fuller CAD UI
+# while deliberately omitting case/fine recording.
+html = r'''<!doctype html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ERLC // ศูนย์สั่งการ CAD</title>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<title>ERLC // POLICE CAD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#030914;--panel:#071426;--panel2:#0a1b31;--line:#153457;--blue:#27a8ff;--cyan:#55ddff;--gold:#ffc34d;--red:#ff4057;--green:#37e6a0;--text:#e7f3ff;--muted:#7891ad;--mono:'JetBrains Mono',monospace;--thai:'Kanit',sans-serif}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#0c2947 0,#030914 48%);color:var(--text);font-family:var(--thai);min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:linear-gradient(#153457 1px,transparent 1px),linear-gradient(90deg,#153457 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(#000,transparent)}
-#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:5}.login{width:min(420px,92vw);background:#061323ee;border:1px solid var(--line);box-shadow:0 30px 100px #000b;padding:32px;position:relative}.login:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--gold))}
-.kicker{font:11px var(--mono);color:var(--muted);letter-spacing:.15em}.title{font-size:38px;font-weight:700;margin:5px 0}.title b{color:var(--blue)}.sub{color:var(--muted);font:11px var(--mono);margin-bottom:25px}.pin{width:100%;background:#020811;border:1px solid var(--line);padding:15px;color:var(--cyan);outline:0;text-align:center;letter-spacing:.5em;font:20px var(--mono)}.primary{width:100%;border:0;background:linear-gradient(90deg,#168ee6,#36c8ff);color:#00101e;font-weight:700;padding:13px;margin-top:12px}.err{color:var(--red);font:11px var(--mono);min-height:20px;margin-top:10px}
-#app{display:none}.top{position:sticky;top:0;z-index:3;background:#061323ee;border-bottom:1px solid var(--line);backdrop-filter:blur(12px);padding:12px 24px;display:flex;justify-content:space-between;align-items:center}.brand{display:flex;gap:12px;align-items:center}.dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}.brand strong{font-size:20px}.brand small{display:block;color:var(--muted);font:9px var(--mono)}.who{text-align:right;color:var(--muted);font-size:12px}.who b{color:var(--text)}.ghost{background:#08182a;border:1px solid var(--line);color:var(--muted);padding:8px 12px;margin-left:12px}
-main{max-width:1450px;margin:auto;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px}@media(max-width:950px){main{grid-template-columns:1fr}.top{padding:10px 14px}}
-.card{background:linear-gradient(180deg,#08182bd9,#061323e8);border:1px solid var(--line);padding:18px;margin-bottom:18px;box-shadow:0 15px 45px #0004}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.head h2{font-size:16px;margin:0}.tag{font:10px var(--mono);color:var(--cyan);border:1px solid #1a527c;padding:4px 8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px}.choice{background:#08192c;border:1px solid var(--line);color:var(--text);padding:11px 8px;text-align:center}.choice:hover{border-color:var(--blue)}.choice.on{background:#0a3151;border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 15px #168ee622}
-.search{display:flex;gap:8px}.search input,.field,input,textarea{background:#020b17;border:1px solid var(--line);color:var(--text);padding:11px;outline:0;width:100%}.search input:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 2px #27a8ff18}.search button{background:#0a2844;border:1px solid var(--blue);color:var(--cyan);padding:0 20px}.status{font:11px var(--mono);color:var(--muted);margin-top:9px}
-.person{margin-top:15px;border:1px solid var(--line);background:#061426;padding:17px}.persontop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.person h3{margin:0;font-size:22px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.chip{font:10px var(--mono);padding:4px 7px;border:1px solid var(--line);color:var(--muted)}.chip.red{border-color:#6e2430;color:#ff6a7b}.chip.green{border-color:#1b684f;color:var(--green)}.info{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.info div{background:#081a2e;padding:9px;color:var(--muted);font-size:12px}.info b{display:block;color:var(--text)}.history{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}.history h4{margin:0 0 8px}.event{padding:9px 0;border-bottom:1px dashed #17304c;font-size:12px}.event small{color:var(--muted);font:10px var(--mono)}.actions{display:flex;gap:8px;margin-top:13px}.actions button{flex:1;padding:10px;border:1px solid var(--line);background:#0a1c30;color:var(--text)}.actions .bolo{border-color:#a12a3c;color:#ff6b7b;background:#2a0d15}.actions .record{border-color:#1b628b;color:var(--cyan)}
-textarea{min-height:90px;resize:vertical}.send{background:linear-gradient(90deg,#1189df,#26b8ff);border:0;padding:12px;width:100%;margin-top:9px;font-weight:700;color:#00101c}
-.unit{display:flex;justify-content:space-between;border-bottom:1px solid #102943;padding:10px 0;font-size:12px}.online{color:var(--green)}.offline{color:#5b6d80}.unit b{color:var(--text)}.feed{max-height:230px;overflow:auto}.log{font:10px var(--mono);padding:6px 0;color:var(--muted)}.log b{color:var(--cyan)}
-#sos{position:fixed;right:24px;bottom:24px;width:68px;height:68px;border-radius:50%;border:2px solid #ff8b99;background:var(--red);color:#210006;font-weight:800;z-index:4;box-shadow:0 0 25px #ff405744}
-.modal{display:none;position:fixed;inset:0;background:#02060dcc;z-index:10;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modalbox{width:min(520px,96vw);background:#061426;border:1px solid var(--blue);padding:20px}.modalbox h3{margin-top:0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}@media(max-width:600px){.info,.formgrid{grid-template-columns:1fr}}
-.toast{position:fixed;top:15px;left:50%;transform:translate(-50%,-150%);background:#061426;border:1px solid var(--cyan);color:var(--cyan);padding:10px 18px;z-index:20;transition:.25s;font:11px var(--mono)}.toast.show{transform:translate(-50%,0)}
+:root{--bg:#050a13;--panel:#0a1220;--panel2:#0d1829;--line:#1a2c44;--blue:#28a9ff;--blue2:#006eff;--cyan:#63ddff;--gold:#ffc857;--red:#ff4d5f;--green:#35e49a;--text:#e7f1ff;--muted:#71849d;--mono:"JetBrains Mono",monospace;--head:"Rajdhani",sans-serif;--sans:"Inter",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(40,169,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(40,169,255,.035) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(#000,transparent 90%)}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}.muted{color:var(--muted)}.blue{color:var(--blue)}.red{color:var(--red)}.green{color:var(--green)}.gold{color:var(--gold)}
+#login{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 25%,#0b2440 0,transparent 45%),var(--bg);z-index:20}
+.login{width:min(430px,92vw);padding:34px;background:rgba(10,18,32,.94);border:1px solid var(--line);box-shadow:0 30px 100px #0008}
+.logo{font:700 42px var(--head);letter-spacing:.05em}.logo b{color:var(--blue)}.eyebrow{font:700 10px var(--mono);letter-spacing:.2em;color:var(--muted);margin-bottom:8px}
+.login p{font-size:12px;color:var(--muted);line-height:1.6}.pin{width:100%;padding:14px;background:#050b14;border:1px solid var(--line);color:#fff;outline:none;letter-spacing:.3em;text-align:center}.pin:focus{border-color:var(--blue)}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;font-weight:700}.btn:hover{border-color:var(--blue);color:var(--blue)}.btn.primary{background:linear-gradient(135deg,var(--blue2),var(--blue));color:white;border:0}.btn.danger{background:#35121a;border-color:#6b2632;color:#ff8b98}
+#app{display:none}.top{position:sticky;top:0;z-index:10;height:70px;background:#07101ddd;border-bottom:1px solid var(--line);backdrop-filter:blur(15px);display:flex;align-items:center;justify-content:space-between;padding:0 24px}.brand{display:flex;align-items:center;gap:12px}.shield{width:38px;height:42px;display:grid;place-items:center;border:1px solid #2c72ae;background:#0b2037;color:var(--blue);font-weight:800;clip-path:polygon(50% 0,90% 13%,86% 72%,50% 100%,14% 72%,10% 13%)}.brand h1{font:700 22px var(--head);margin:0}.brand small{display:block;color:var(--muted);font:9px var(--mono);letter-spacing:.15em}.topright{display:flex;align-items:center;gap:18px}.clock{text-align:right;font:600 12px var(--mono)}.clock b{display:block;color:var(--cyan);font-size:15px}
+main{max-width:1500px;margin:auto;padding:22px;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px}.card{background:linear-gradient(180deg,#0b1524ee,#08111ddd);border:1px solid var(--line);padding:18px;position:relative}.card:before{content:"";position:absolute;left:-1px;top:-1px;width:32px;height:3px;background:linear-gradient(90deg,var(--blue),transparent)}
+h2{font:700 16px var(--head);letter-spacing:.12em;text-transform:uppercase;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}.choice{padding:11px 8px;text-align:center;background:#0a1727;border:1px solid var(--line);color:#cfe0f5}.choice:hover,.choice.on{border-color:var(--blue);color:var(--blue);background:#0b2740}.choice.inc.on{border-color:var(--gold);color:var(--gold);background:#2a210d}
+.dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.stat{padding:13px;background:#081525;border:1px solid var(--line)}.stat b{display:block;font:700 25px var(--head)}.stat span{font:10px var(--mono);color:var(--muted)}
+.search{display:flex;gap:8px}.field{width:100%;background:#050b14;border:1px solid var(--line);color:var(--text);padding:11px;outline:none}.field:focus{border-color:var(--blue)}.results{display:grid;gap:10px;margin-top:12px}.person{border:1px solid var(--line);padding:14px;background:#091524}.personhead{display:flex;justify-content:space-between;gap:10px}.personname{font-weight:700;font-size:16px}.tag{font:700 10px var(--mono);padding:4px 7px;border:1px solid var(--line);color:var(--muted)}.tag.bolo{color:var(--red);border-color:#71313b}.tag.clear{color:var(--green);border-color:#205e49}.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:10px;font:11px var(--mono);color:var(--muted)}.facts b{color:#dce8f6}
+.row{display:flex;gap:8px;flex-wrap:wrap}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:6px 9px;background:#071321;border:1px solid var(--line);font:10px var(--mono);color:var(--muted)}
+textarea{min-height:85px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.formgrid .wide{grid-column:1/-1}
+.units{display:grid;gap:6px}.unit{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--line);font:11px var(--mono)}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#394351;margin-right:7px}.dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+.feed{max-height:230px;overflow:auto;display:grid;gap:6px}.feed div{font:10px var(--mono);color:var(--muted)}.feed b{color:var(--blue);margin-right:7px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quick .btn{padding:14px 8px}.notice{padding:10px;background:#0a1a2b;border:1px dashed #21415f;color:var(--muted);font-size:11px;line-height:1.5}
+#sos{position:fixed;right:24px;bottom:24px;width:70px;height:70px;border-radius:50%;background:var(--red);border:2px solid #ff8792;color:#210007;font-weight:900;z-index:12;box-shadow:0 0 30px #ff4d5f44}
+.modal{position:fixed;inset:0;background:#020711cc;backdrop-filter:blur(5px);display:none;place-items:center;z-index:30}.modal.show{display:grid}.modalbox{width:min(500px,92vw);background:#091423;border:1px solid var(--line);padding:20px;box-shadow:0 30px 100px #000}.modalbox h3{font:700 22px var(--head);margin:0 0 8px}
+.toast{position:fixed;left:50%;top:82px;transform:translateX(-50%) translateY(-30px);opacity:0;background:#0a1828;border:1px solid var(--blue);color:var(--cyan);padding:10px 16px;font:11px var(--mono);z-index:50;transition:.2s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:1000px){main{grid-template-columns:1fr}.dashboard{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.top{padding:0 12px}.clock{display:none}main{padding:12px}.facts,.formgrid{grid-template-columns:1fr}.dashboard{grid-template-columns:1fr 1fr}.brand h1{font-size:18px}}
 </style>
 </head>
 <body>
-<div id="login"><div class="login">
-<div class="kicker">ERLC // POLICE DEPARTMENT</div><div class="title">CAD <b>DISPATCH</b></div><div class="sub">ระบบศูนย์สั่งการและฐานข้อมูลเจ้าหน้าที่</div>
-<input id="pin" class="pin" type="password" inputmode="numeric" maxlength="8" placeholder="รหัสประจำหน่วย">
-<button id="loginBtn" class="primary">เข้าสู่ระบบ</button><div id="loginErr" class="err"></div>
-</div></div>
-
-<div id="app">
-<header class="top"><div class="brand"><span class="dot"></span><div><strong>ERLC POLICE CAD</strong><small>REAL-TIME DISPATCH • RECORDS • BOLO</small></div></div>
-<div><span id="who" class="who"></span><button id="logout" class="ghost">ออกจากระบบ</button></div></header>
-<main>
-<div>
-<section class="card"><div class="head"><h2>📍 เลือกสถานที่เกิดเหตุ</h2><span id="zoneCount" class="tag"></span></div><div id="zones" class="grid"></div></section>
-<section class="card"><div class="head"><h2>🚨 ประเภทเหตุการณ์</h2><span id="incidentCount" class="tag"></span></div><div id="incidents" class="grid"></div></section>
-
-<section class="card"><div class="head"><h2>🔎 ค้นหาประวัติบุคคล / รถ</h2><span class="tag">RECORDS</span></div>
-<div class="search"><input id="query" placeholder="พิมพ์ชื่อบุคคล หรือทะเบียนรถ..."><button id="searchBtn">ค้นหา</button></div><div id="searchStatus" class="status"></div><div id="result"></div></section>
-
-<section class="card"><div class="head"><h2>📡 แจ้งเหตุไปยังศูนย์</h2><span class="tag">DISPATCH</span></div>
-<div class="chips"><span id="selZone" class="chip">สถานที่: ยังไม่ได้เลือก</span><span id="selIncident" class="chip">เหตุการณ์: ยังไม่ได้เลือก</span></div>
-<textarea id="notes" placeholder="รายละเอียดเพิ่มเติม เช่น ทิศทางหลบหนี จำนวนผู้ต้องสงสัย อาวุธ ยานพาหนะ..."></textarea>
-<button id="sendReport" class="send">ส่งรายงานเข้าศูนย์สั่งการ</button></section>
+<div id="login">
+ <div class="login">
+  <div class="eyebrow">ERLC // SECURE POLICE NETWORK</div>
+  <div class="logo">POLICE <b>CAD</b></div>
+  <p>ระบบ Computer Aided Dispatch สำหรับเจ้าหน้าที่ตำรวจใน ERLC<br>เข้าสู่ระบบด้วย Unit PIN จากตารางเจ้าหน้าที่</p>
+  <input id="pin" class="pin" type="password" inputmode="numeric" maxlength="8" placeholder="UNIT PIN" autocomplete="off">
+  <button id="loginBtn" class="btn primary" style="width:100%;margin-top:12px">เข้าสู่ระบบ</button>
+  <div id="loginErr" class="red" style="font:11px var(--mono);margin-top:10px;min-height:16px"></div>
+ </div>
 </div>
 
+<div id="app">
+<header class="top">
+ <div class="brand"><div class="shield">PD</div><div><h1>ERLC POLICE <b style="color:var(--blue)">CAD</b></h1><small>COMPUTER AIDED DISPATCH // SECURE NETWORK</small></div></div>
+ <div class="topright"><div class="clock"><b id="time">--:--:--</b><span id="date">----</span></div><div id="me"></div><button id="logout" class="btn">ออกจากระบบ</button></div>
+</header>
+
+<main>
+<section>
+ <div class="dashboard">
+  <div class="stat"><b id="onlineN">0</b><span>UNITS ONLINE</span></div>
+  <div class="stat"><b id="boloN">0</b><span>BOLO / ALERT</span></div>
+  <div class="stat"><b id="dispatchN">0</b><span>DISPATCH SENT</span></div>
+  <div class="stat"><b id="clockN">LIVE</b><span>SYSTEM STATUS</span></div>
+ </div>
+
+ <div class="card" style="margin-bottom:14px"><h2>เลือกสถานที่ใน ERLC</h2><div id="zones" class="grid"></div></div>
+ <div class="card" style="margin-bottom:14px"><h2>ประเภทเหตุการณ์</h2><div id="incidents" class="grid"></div></div>
+
+ <div class="card" style="margin-bottom:14px">
+  <h2>ค้นหาข้อมูลบุคคล / รถ</h2>
+  <div class="search"><input id="q" class="field" placeholder="พิมพ์ชื่อ, นามสกุล หรือทะเบียนรถ"><button id="search" class="btn primary">ค้นหา</button></div>
+  <div id="status" class="muted" style="font:10px var(--mono);margin-top:9px"></div><div id="results" class="results"></div>
+ </div>
+
+ <div class="card" style="margin-bottom:14px">
+  <h2>ส่งแจ้งเหตุเข้า Discord</h2>
+  <div class="chips" style="margin-bottom:10px"><span class="chip">สถานที่: <b id="selZone">ยังไม่เลือก</b></span><span class="chip">เหตุ: <b id="selInc">ยังไม่เลือก</b></span></div>
+  <textarea id="notes" class="field" placeholder="รายละเอียดเพิ่มเติม / ทิศทาง / รถ / บุคคล / อาวุธ ฯลฯ"></textarea>
+  <div class="row" style="margin-top:9px"><button id="dispatch" class="btn primary">🚨 ส่ง Dispatch</button><button id="bolo" class="btn danger">⚠ แจ้ง BOLO</button></div>
+  <div id="sendStatus" class="muted" style="font:10px var(--mono);margin-top:8px"></div>
+ </div>
+
+ <div class="card">
+  <h2>เครื่องมือด่วน</h2>
+  <div class="quick">
+   <button class="btn" id="clearSearch">ล้างผลค้นหา</button>
+   <button class="btn" id="repeat">ใช้เหตุล่าสุด</button>
+   <button class="btn" id="testDiscord">ทดสอบ Discord</button>
+   <button class="btn" id="copyInfo">คัดลอกข้อมูลหน่วย</button>
+  </div>
+ </div>
+</section>
+
 <aside>
-<section class="card"><div class="head"><h2>👮 หน่วยปฏิบัติการ</h2><span id="unitCount" class="tag"></span></div><div id="units"></div></section>
-<section class="card"><div class="head"><h2>📋 บันทึกการใช้งาน</h2></div><div id="logs" class="feed"></div></section>
+ <div class="card" style="margin-bottom:14px">
+  <h2>Active Units</h2><div id="units" class="units"><div class="muted">กำลังโหลด...</div></div>
+ </div>
+ <div class="card" style="margin-bottom:14px">
+  <h2>สถานะระบบ</h2>
+  <div class="notice">● Google Sheets: <b class="green">CONNECTED</b><br>● Discord Dispatch: <b id="discordState" class="green">READY</b><br>● Case/Fine Recording: <b class="gold">DISABLED</b></div>
+ </div>
+ <div class="card">
+  <h2>Session Activity</h2><div id="feed" class="feed"><div>ยังไม่มีกิจกรรม</div></div>
+ </div>
 </aside>
-</main></div>
+</main>
+<button id="sos">SOS</button>
+<div id="toast" class="toast"></div>
 
-<button id="sos">SOS</button><div id="toast" class="toast"></div>
-
-<div id="modal" class="modal"><div class="modalbox">
-<div class="head"><h3 id="modalTitle">บันทึกข้อมูล</h3><button id="closeModal" class="ghost">ปิด</button></div>
-<div id="modalBody"></div>
+<div id="sosModal" class="modal"><div class="modalbox">
+ <h3 class="red">🆘 ยืนยัน SOS</h3><p class="muted">ระบบจะส่งแจ้งเตือนเร่งด่วนไปยัง Discord ทันที</p>
+ <div class="row"><button id="cancelSos" class="btn" style="flex:1">ยกเลิก</button><button id="confirmSos" class="btn danger" style="flex:1">ส่ง SOS</button></div>
 </div></div>
+</div>
 
 <script>
 const UNITS_SHEET_ID="11JrUuWvb1wgZJ4dEK-xo9b7ziqi7H4H0Zb2FVuIiB7Q";
 const DATABASE_SHEET_ID="1-6APHkfsmXqFHbwcw1cCm8yo_MYD1OzIRD7x8AeyXCk";
 const DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1490811672129175753/vEDTTyvqk1pskfw8QypBE6Ofpg-vyVW45x3Ybg4chbbfHBfFbx2UCnNvbCZ7roL6ahWd";
-const U={callsign:0,name:1,rank:2,status:3,pin:4};
-const D={name:0,plate:1,vtype:2,expiry:3,fines:4,license:5,gunpermit:6,notes:7,bolo:8,history:9};
+const UC={callsign:0,name:1,rank:2,status:3,pin:4};
+const DB={name:0,plate:1,vtype:2,expiry:3,fines:4,license:5,gun:6,notes:7};
 
-const ZONES=["Pinewood","Springfield","River City","Bayside","Woodland","Sandy Shores","Liberty County Airport","Liberty County Sheriff Office","Liberty County Police Department","Hospital","Bank","Jewelry Store","Gas Station","Substation","Highway","Interstate","Docks","Port","Tunnel","Construction Site","Farm","Ranch","Suburbs","Downtown","Residential Area","Shopping Center"];
-const INCIDENTS=["ปล้นธนาคาร","ปล้นร้านค้า","ปล้นร้านเพชร","ยิงปะทะ","บุคคลมีอาวุธ","รถต้องสงสัย","ไล่ล่าด้วยยานพาหนะ","ขับรถประมาท","ฝ่าด่านตรวจ","บุกรุก","ทำร้ายร่างกาย","ลักพาตัว","โจรกรรมรถ","ทะเลาะวิวาท","ผู้ต้องสงสัยหลบหนี","เจ้าหน้าที่ขอกำลังเสริม","เจ้าหน้าที่ได้รับบาดเจ็บ","เหตุฉุกเฉินอื่นๆ"];
+const ZONES=["Police Station","Sheriff Office","Bank","Jewelry Store","Gas Station","Highway","Airport","Hospital","Convenience Store","Warehouse","Yacht","Ammunation","Casino","Train Station","Docks","Bloxwich","River City","Springfield","Major Highway"];
+const INCIDENTS=["Robbery","Armed Robbery","Shootout","Officer Down","Pursuit","Hostage Situation","Kidnapping","Grand Theft Auto","Reckless Driving","Suspicious Person","Roadblock","Assault","Burglary","Shots Fired","Traffic Collision","Backup Requested"];
 
-let user=null,zone=null,incident=null,currentPerson=null;
+let user=null,zone=null,incident=null,lastIncident=null,unitsTimer=null,dispatchCount=0,boloCount=0;
 
+const $=id=>document.getElementById(id);
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function toast(s){let x=document.getElementById("toast");x.textContent=s;x.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>x.classList.remove("show"),2800)}
-function log(s){let x=document.getElementById("logs");let d=document.createElement("div");d.className="log";d.innerHTML="<b>"+new Date().toLocaleTimeString("th-TH")+"</b> "+esc(s);x.prepend(d);while(x.children.length>35)x.lastChild.remove()}
-async function rows(id,sheet){let r=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`);if(!r.ok)throw Error(r.status);let t=await r.text();let j=JSON.parse(t.slice(t.indexOf("(")+1,t.lastIndexOf(")")));return (j.table?.rows||[]).map(x=>(x.c||[]).map(c=>c?.v??""))}
-
-document.getElementById("loginBtn").onclick=async()=>{
- let pin=document.getElementById("pin").value.trim(),e=document.getElementById("loginErr");e.textContent="";
- if(!pin)return e.textContent="กรุณากรอกรหัสประจำหน่วย";
- try{let a=await rows(UNITS_SHEET_ID,"Units"),m=a.find(r=>String(r[U.pin]||"").trim()===pin);
- if(!m)return e.textContent="ไม่พบรหัสประจำหน่วย";
- user={callsign:m[0]||"—",name:m[1]||"—",rank:m[2]||"—"};document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";document.getElementById("who").innerHTML="<b>"+esc(user.callsign)+"</b> "+esc(user.name)+"<br>"+esc(user.rank);build();loadUnits();log("เข้าสู่ระบบโดย "+user.callsign);toast("เข้าสู่ระบบสำเร็จ")
- }catch(x){e.textContent="เชื่อมต่อฐานข้อมูลไม่ได้"}};
-document.getElementById("pin").onkeydown=e=>{if(e.key==="Enter")document.getElementById("loginBtn").click()};
-document.getElementById("logout").onclick=()=>location.reload();
-
-function build(){
- let z=document.getElementById("zones"),i=document.getElementById("incidents");z.innerHTML="";i.innerHTML="";
- ZONES.forEach(v=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.onclick=()=>{zone=v;z.querySelectorAll(".choice").forEach(x=>x.classList.remove("on"));b.classList.add("on");document.getElementById("selZone").textContent="สถานที่: "+v};z.append(b)});
- INCIDENTS.forEach(v=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.onclick=()=>{incident=v;i.querySelectorAll(".choice").forEach(x=>x.classList.remove("on"));b.classList.add("on");document.getElementById("selIncident").textContent="เหตุการณ์: "+v};i.append(b)});
- document.getElementById("zoneCount").textContent=ZONES.length+" จุด";document.getElementById("incidentCount").textContent=INCIDENTS.length+" เหตุการณ์"
-}
-async function loadUnits(){
- try{let a=await rows(UNITS_SHEET_ID,"Units"),x=document.getElementById("units");x.innerHTML="";let on=0;a.forEach(r=>{let yes=/online|on duty|พร้อม|ปฏิบัติ|1/i.test(r[U.status]||"");if(yes)on++;let d=document.createElement("div");d.className="unit";d.innerHTML=`<span><span class="${yes?"online":"offline"}">●</span> <b>${esc(r[0]||"—")}</b></span><span>${esc(r[2]||"")}</span>`;x.append(d)});document.getElementById("unitCount").textContent=on+" ออนไลน์"}catch(e){document.getElementById("units").innerHTML="<span class=status>โหลดรายชื่อหน่วยไม่สำเร็จ</span>"}}
-
-document.getElementById("searchBtn").onclick=search;
-document.getElementById("query").onkeydown=e=>{if(e.key==="Enter")search()};
-async function search(){
- let q=document.getElementById("query").value.trim().toLowerCase(),out=document.getElementById("result"),st=document.getElementById("searchStatus");out.innerHTML="";currentPerson=null;if(!q){st.textContent="กรุณาพิมพ์ชื่อหรือทะเบียนรถ";return}st.textContent="กำลังค้นหา...";
- try{let a=await rows(DATABASE_SHEET_ID,"Sheet1"),m=a.filter(r=>String(r[D.name]||"").toLowerCase().includes(q)||String(r[D.plate]||"").toLowerCase().includes(q));if(!m.length){st.textContent="ไม่พบข้อมูล";log("ค้นหา "+q+" — ไม่พบข้อมูล");return}st.textContent="พบ "+m.length+" รายการ";m.slice(0,20).forEach(r=>out.append(renderPerson(r)));log("ค้นหา "+q+" — พบ "+m.length+" รายการ")}catch(e){st.textContent="เชื่อมต่อฐานข้อมูลไม่ได้"}}
-function renderPerson(r){
- let bolo=String(r[D.bolo]||"").trim(),hist=String(r[D.history]||"").trim(),fine=r[D.fines]||"0",d=document.createElement("div");d.className="person";
- let history=hist?hist.split(/\n|\|/).filter(Boolean).map(v=>`<div class="event">${esc(v)}</div>`).join(""):"<div class=status>ยังไม่มีประวัติการก่อเหตุ</div>";
- d.innerHTML=`<div class="persontop"><div><h3>${esc(r[D.name]||"ไม่ทราบชื่อ")}</h3><div class="chips">${bolo?'<span class="chip red">⚠ BOLO / เฝ้าระวัง</span>':'<span class="chip green">✓ ไม่มี BOLO</span>'}</div></div><span class="tag">PERSON RECORD</span></div>
- <div class="info"><div>ทะเบียนรถ<b>${esc(r[D.plate]||"—")}</b></div><div>ยานพาหนะ<b>${esc(r[D.vtype]||"—")}</b></div><div>ใบขับขี่<b>${esc(r[D.license]||"—")}</b></div><div>ใบอนุญาตอาวุธ<b>${esc(r[D.gunpermit]||"—")}</b></div><div>ค่าปรับค้าง<b>${esc(fine)}</b></div><div>วันหมดอายุ<b>${esc(r[D.expiry]||"—")}</b></div></div>
- <div class="history"><h4>📋 ประวัติการก่อเหตุ</h4>${history}</div>
- <div class="actions"><button class="bolo" onclick='openAction("bolo",${JSON.stringify(r)})'>🚨 แจ้ง BOLO</button><button class="record" onclick='openAction("history",${JSON.stringify(r)})'>➕ เพิ่มประวัติการก่อเหตุ</button></div>`;
- return d
-}
-function openAction(type,r){
- currentPerson=r;let modal=document.getElementById("modal"),body=document.getElementById("modalBody");document.getElementById("modalTitle").textContent=type==="bolo"?"🚨 เพิ่ม BOLO / บุคคลต้องเฝ้าระวัง":"📋 เพิ่มประวัติการก่อเหตุ";
- body.innerHTML=`<div class="status">บุคคล: <b>${esc(r[D.name]||"—")}</b> • ทะเบียน: <b>${esc(r[D.plate]||"—")}</b></div><br>
- ${type==="history"?`<div class="formgrid"><div><label>ประเภทเหตุ</label><input id="aType" placeholder="เช่น หลบหนีเจ้าหน้าที่"></div><div><label>สถานที่</label><input id="aPlace" value="${esc(zone||"")}"></div></div>`:`<div class="formgrid"><div><label>ระดับ BOLO</label><input id="aType" value="เฝ้าระวัง"></div><div><label>สถานที่ล่าสุด</label><input id="aPlace" value="${esc(zone||"")}"></div></div>`}
- <br><textarea id="aNote" placeholder="รายละเอียด / เหตุผล / ข้อมูลเพิ่มเติม"></textarea><button id="saveAction" class="send">บันทึกและแจ้ง Discord</button>`;
- modal.classList.add("show");document.getElementById("saveAction").onclick=()=>saveAction(type,r)
-}
-document.getElementById("closeModal").onclick=()=>document.getElementById("modal").classList.remove("show");
-async function saveAction(type,r){
- let reason=document.getElementById("aNote").value.trim(),kind=document.getElementById("aType").value.trim(),place=document.getElementById("aPlace").value.trim();
- if(!reason&&!kind){toast("กรุณาใส่รายละเอียด");return}
- let title=type==="bolo"?"🚨 BOLO — บุคคลต้องเฝ้าระวัง":"📋 ประวัติการก่อเหตุ",color=type==="bolo"?0xff4057:0x27a8ff;
- let embed={title,color,fields:[
- {name:"บุคคล",value:String(r[D.name]||"—"),inline:true},{name:"ทะเบียน",value:String(r[D.plate]||"—"),inline:true},
- {name:type==="bolo"?"ระดับ BOLO":"ประเภทเหตุ",value:kind||"—",inline:true},{name:"สถานที่",value:place||"—",inline:true},
- {name:"รายละเอียด",value:reason||"—",inline:false},{name:"ผู้บันทึก",value:`${user.callsign} — ${user.name} (${user.rank})`,inline:false}],timestamp:new Date().toISOString()};
- try{let res=await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[embed]})});if(!res.ok)throw Error(res.status);document.getElementById("modal").classList.remove("show");toast(type==="bolo"?"แจ้ง BOLO เข้า Discord แล้ว":"บันทึกประวัติเข้า Discord แล้ว");log((type==="bolo"?"แจ้ง BOLO ":"เพิ่มประวัติ ")+r[D.name])}catch(e){toast("ส่ง Discord ไม่สำเร็จ")}}
-document.getElementById("sendReport").onclick=async()=>{
- if(!zone||!incident){toast("เลือกสถานที่และประเภทเหตุก่อน");return}
- let note=document.getElementById("notes").value.trim(),embed={title:"🚨 รายงานเหตุการณ์จาก CAD",color:0x27a8ff,fields:[{name:"สถานที่",value:zone,inline:true},{name:"เหตุการณ์",value:incident,inline:true},{name:"หน่วย",value:`${user.callsign} — ${user.name}`,inline:false},{name:"รายละเอียด",value:note||"—",inline:false}],timestamp:new Date().toISOString()};
- try{let r=await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[embed]})});if(!r.ok)throw Error();document.getElementById("notes").value="";toast("ส่งรายงานเข้าศูนย์แล้ว");log("ส่งรายงาน "+incident+" @ "+zone)}catch(e){toast("ส่งรายงานไม่สำเร็จ")}}
-document.getElementById("sos").onclick=async()=>{
- if(!user)return;if(!confirm("ยืนยันส่ง SOS ให้เจ้าหน้าที่ทุกหน่วย?"))return;
- let embed={title:"🆘 SOS — ขอความช่วยเหลือด่วน",color:0xff4057,fields:[{name:"หน่วย",value:`${user.callsign} — ${user.name} (${user.rank})`},{name:"สถานที่ล่าสุด",value:zone||"ไม่ได้ระบุ"}],timestamp:new Date().toISOString()};
- try{await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:"@here **มีการกด SOS จาก CAD**",embeds:[embed]})});toast("ส่ง SOS แล้ว");log("⚠ SOS โดย "+user.callsign)}catch(e){toast("SOS ส่งไม่สำเร็จ")}};
+function toast(s,err=false){$("toast").textContent=s;$("toast").style.borderColor=err?"var(--red)":"var(--blue)";$("toast").classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>$("toast").classList.remove("show"),2500)}
+function log(s){let f=$("feed");if(f.children.length===1&&f.children[0].textContent==="ยังไม่มีกิจกรรม")f.innerHTML="";let d=document.createElement("div");d.innerHTML=`<b>${new Date().toLocaleTimeString("th-TH")}</b>${esc(s)}`;f.prepend(d);while(f.children.length>30)f.lastChild.remove()}
+async function sheet(id,tab){let u=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;let r=await fetch(u);if(!r.ok)throw Error(r.status);let t=await r.text(),j=JSON.parse(t.slice(t.indexOf("(")+1,t.lastIndexOf(")")));return (j.table?.rows||[]).map(x=>(x.c||[]).map(c=>c?.v==null?"":String(c.v)))}
+function clock(){let n=new Date();$("time").textContent=n.toLocaleTimeString("th-TH",{hour12:false});$("date").textContent=n.toLocaleDateString("th-TH",{weekday:"short",year:"numeric",month:"short",day:"numeric"})}
+function build(list,id,type){let el=$(id);el.innerHTML="";list.forEach(x=>{let b=document.createElement("button");b.className="choice"+(type==="i"?" inc":"");b.textContent=x;b.onclick=()=>{if(type==="i"){incident=x;lastIncident=x;document.querySelectorAll("#incidents .choice").forEach(a=>a.classList.remove("on"));$("selInc").textContent=x}else{zone=x;document.querySelectorAll("#zones .choice").forEach(a=>a.classList.remove("on"));$("selZone").textContent=x}b.classList.add("on")};el.appendChild(b)})}
+function renderUnits(rows){let on=0;$("units").innerHTML="";rows.forEach(r=>{let st=(r[UC.status]||"").toLowerCase(),yes=/online|on duty|active|1/.test(st);if(yes)on++;let d=document.createElement("div");d.className="unit";d.innerHTML=`<span><i class="dot ${yes?"on":""}"></i>${esc(r[0]||"—")}</span><span class="muted">${esc(r[2]||"")}</span>`;$("units").appendChild(d)});$("onlineN").textContent=on}
+async function loadUnits(){try{renderUnits(await sheet(UNITS_SHEET_ID,"Units"))}catch(e){$("units").innerHTML='<div class="muted">โหลดรายชื่อหน่วยไม่สำเร็จ</div>'}}
+async function login(){let pin=$("pin").value.trim();$("loginErr").textContent="";if(!pin)return $("loginErr").textContent="กรุณาใส่ PIN";$("loginBtn").disabled=true;try{let rows=await sheet(UNITS_SHEET_ID,"Units"),r=rows.find(x=>(x[UC.pin]||"").trim()===pin);if(!r)throw Error("bad");user={callsign:r[0]||"—",name:r[1]||"—",rank:r[2]||"—"};$("login").style.display="none";$("app").style.display="block";$("me").innerHTML=`<b>${esc(user.callsign)}</b><br><span class="muted" style="font:10px var(--mono)">${esc(user.name)} · ${esc(user.rank)}</span>`;build(ZONES,"zones","z");build(INCIDENTS,"incidents","i");await loadUnits();unitsTimer=setInterval(loadUnits,20000);log(`${user.callsign} เข้าสู่ระบบ`);toast("เข้าสู่ระบบสำเร็จ");}catch(e){$("loginErr").textContent=e.message==="bad"?"PIN ไม่ถูกต้อง":"เชื่อมต่อ Units ไม่สำเร็จ"}finally{$("loginBtn").disabled=false}}
+$("loginBtn").onclick=login;$("pin").onkeydown=e=>{if(e.key==="Enter")login()};
+$("logout").onclick=()=>{clearInterval(unitsTimer);user=null;$("app").style.display="none";$("login").style.display="grid";$("pin").value=""};
+async function search(){let q=$("q").value.trim().toLowerCase();$("results").innerHTML="";if(!q)return $("status").textContent="กรุณาพิมพ์ชื่อหรือทะเบียน";$("status").textContent="กำลังค้นหา...";try{let rows=await sheet(DATABASE_SHEET_ID,"Sheet1"),m=rows.filter(r=>(r[DB.name]||"").toLowerCase().includes(q)||(r[DB.plate]||"").toLowerCase().includes(q));$("status").textContent=`พบ ${m.length} รายการ`;m.slice(0,30).forEach(r=>{$("results").appendChild(person(r))});log(`ค้นหา "${q}" พบ ${m.length} รายการ`)}catch(e){$("status").textContent="เชื่อมต่อฐานข้อมูลไม่ได้"}}
+function person(r){let d=document.createElement("div");d.className="person";let notes=r[DB.notes]||"";let bolo=/bolo|wanted|ต้องเฝ้าระวัง|จับตา/i.test(notes);d.innerHTML=`<div class="personhead"><div class="personname">${esc(r[DB.name]||"ไม่ทราบชื่อ")}</div><span class="tag ${bolo?"bolo":"clear"}">${bolo?"⚠ BOLO / ALERT":"✓ ไม่มี BOLO"}</span></div><div class="facts"><div>ทะเบียน<br><b>${esc(r[DB.plate]||"—")}</b></div><div>รถ<br><b>${esc(r[DB.vtype]||"—")}</b></div><div>ใบขับขี่<br><b>${esc(r[DB.license]||"—")}</b></div><div>ใบอนุญาตอาวุธ<br><b>${esc(r[DB.gun]||"—")}</b></div><div>หมดอายุ<br><b>${esc(r[DB.expiry]||"—")}</b></div><div>หมายเหตุ<br><b>${esc(notes||"—")}</b></div></div>`;return d}
+$("search").onclick=search;$("q").onkeydown=e=>{if(e.key==="Enter")search()};$("clearSearch").onclick=()=>{$("q").value="";$("results").innerHTML="";$("status").textContent=""};
+function embed(title,color,fields){return {title,color,fields,timestamp:new Date().toISOString(),footer:{text:"ERLC POLICE CAD // Dispatch Network"}}}
+async function discord(payload){let r=await fetch(DISCORD_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});if(!r.ok)throw Error(r.status)}
+async function send(kind){if(!zone||!incident)return toast("กรุณาเลือกสถานที่และเหตุการณ์",true);let notes=$("notes").value.trim()||"—";let title=kind==="bolo"?"⚠ BOLO / ALERT":"🚨 NEW DISPATCH";let color=kind==="bolo"?0xff4d5f:0x28a9ff;let fields=[{name:"สถานที่",value:zone,inline:true},{name:"เหตุการณ์",value:incident,inline:true},{name:"หน่วย",value:`${user.callsign} — ${user.name} (${user.rank})`,inline:false},{name:"รายละเอียด",value:notes,inline:false}];$("sendStatus").textContent="กำลังส่ง...";try{await discord({embeds:[embed(title,color,fields)]});$("notes").value="";lastIncident=incident;if(kind==="bolo"){boloCount++;$("boloN").textContent=boloCount}else{dispatchCount++;$("dispatchN").textContent=dispatchCount}$("sendStatus").textContent="ส่งสำเร็จ";toast(kind==="bolo"?"ส่ง BOLO เข้า Discord แล้ว":"ส่ง Dispatch เข้า Discord แล้ว");log(`${kind==="bolo"?"BOLO":"Dispatch"} — ${incident} @ ${zone}`)}catch(e){$("sendStatus").textContent="ส่งไม่สำเร็จ";toast("Discord ส่งไม่สำเร็จ",true)}}
+$("dispatch").onclick=()=>send("dispatch");$("bolo").onclick=()=>send("bolo");$("repeat").onclick=()=>{if(lastIncident){incident=lastIncident;$("selInc").textContent=incident;toast("ใช้เหตุล่าสุดแล้ว")}else toast("ยังไม่มีเหตุล่าสุด",true)};
+$("testDiscord").onclick=async()=>{try{await discord({embeds:[embed("🔧 CAD SYSTEM TEST",0x28a9ff,[{name:"Unit",value:`${user.callsign} — ${user.name}`},{name:"Status",value:"ระบบ Discord ทำงานปกติ"}])]});toast("ทดสอบ Discord สำเร็จ");log("ทดสอบ Discord สำเร็จ")}catch(e){toast("ทดสอบ Discord ไม่สำเร็จ",true)}};
+$("copyInfo").onclick=async()=>{let s=`ERLC CAD | Unit: ${user.callsign} | Officer: ${user.name} | Rank: ${user.rank} | Location: ${zone||"—"} | Incident: ${incident||"—"}`;try{await navigator.clipboard.writeText(s);toast("คัดลอกข้อมูลแล้ว")}catch(e){toast("คัดลอกไม่ได้",true)}};
+$("sos").onclick=()=>user&&$("sosModal").classList.add("show");$("cancelSos").onclick=()=>$("sosModal").classList.remove("show");$("confirmSos").onclick=async()=>{ $("sosModal").classList.remove("show");try{await discord({content:"@here",embeds:[embed("🆘 OFFICER SOS",0xff4d5f,[{name:"หน่วย",value:`${user.callsign} — ${user.name} (${user.rank})`},{name:"สถานที่",value:zone||"ไม่ได้ระบุ"},{name:"เหตุการณ์",value:incident||"ไม่ได้ระบุ"}])]});toast("ส่ง SOS แล้ว");log(`SOS โดย ${user.callsign}`)}catch(e){toast("ส่ง SOS ไม่สำเร็จ",true)}};
+document.addEventListener("keydown",e=>{if(e.shiftKey&&e.key.toLowerCase()==="s"&&user)$("sos").click();if(e.key==="Escape")$("sosModal").classList.remove("show")});
+clock();setInterval(clock,1000);
 </script>
 </body></html>'''
 
-path=Path("/mnt/data/index.html")
-path.write_text(html,encoding="utf-8")
-print(f"สร้างไฟล์เรียบร้อย: {path}")
+p.write_text(html, encoding="utf-8")
+print("สร้างไฟล์ index.html เวอร์ชันเต็มเรียบร้อย")
+print(f"ขนาดไฟล์: {p.stat().st_size:,} bytes")
