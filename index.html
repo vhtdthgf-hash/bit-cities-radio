@@ -259,7 +259,7 @@
       <div>
         <div class="card">
           <h2>สืบค้นข้อมูลบุคคล / ทะเบียนรถ</h2>
-          <div class="subtitle">ค้นแล้วระบบจะส่งผลการค้นหาเข้า Discord อัตโนมัติ</div>
+          <div class="subtitle">ค้นแล้วระบบจะส่งผลการค้นหาเข้า Discord อัตโนมัติ — อ่านข้อมูลตรงจาก Google Sheet เดิม 800 รายชื่อ</div>
           <div id="search-row">
             <input id="search-input" type="text" placeholder="ชื่อ หรือ ทะเบียนรถ…">
             <button class="btn-secondary" id="search-btn">ค้นหา</button>
@@ -349,25 +349,42 @@ const SUPABASE_URL = "YOUR_SUPABASE_URL";
 const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1490811672129175753/vEDTTyvqk1pskfw8QypBE6Ofpg-vyVW45x3Ybg4chbbfHBfFbx2UCnNvbCZ7roL6ahWd";
 
+// ระบบค้นหาทะเบียน/บุคคล อ่านตรงจาก Google Sheet เดิม (800 แถวที่มีอยู่แล้ว)
+// ไม่ต้อง import เข้า Supabase — อ่านตามตำแหน่งคอลัมน์ ภาษาไทยในชีตใช้ได้ปกติ ไม่ต้องแก้อะไรเลย
+const DATABASE_SHEET_ID = "1-6APHkfsmXqFHbwcw1cCm8yo_MYD1OzIRD7x8AeyXCk";
+const DATABASE_SHEET_TAB = "Sheet1";
+const DB_COL = { name:0, plate:1, vtype:2, expiry:3, fines:4, license:5, gunpermit:6, notes:7 };
+
+async function fetchSheetRows(sheetId, tabName){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error("Sheet fetch failed: " + res.status);
+  const text = await res.text();
+  const jsonStr = text.substring(text.indexOf("(") + 1, text.lastIndexOf(")"));
+  const data = JSON.parse(jsonStr);
+  const rows = (data.table && data.table.rows) ? data.table.rows : [];
+  return rows.map(r => (r.c || []).map(c => (c && c.v !== null && c.v !== undefined) ? String(c.v) : ""));
+}
+
 if(SUPABASE_URL.startsWith("YOUR_") || SUPABASE_ANON_KEY.startsWith("YOUR_")){
   document.getElementById("setup-warning").style.display = "block";
 }
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const ZONES = ["ธนาคาร","ร้านเพชร","ปั๊มน้ำมัน","ทางหลวง","Cayo Perico","สนามบิน","สถานีตรวจ","โรงพยาบาล","ร้านสะดวกซื้อ","โกดังสินค้า","เรือยอชท์","ร้านปืน","คาสิโน","สถานีรถไฟ","ท่าเรือ"];
+const ZONES = ["ธนาคาร","ร้านเพชร","ปั๊มน้ำมัน","ทางหลวง","Cayo Perico","สนามบิน","สถานีตำรวจ","โรงพยาบาล","ร้านสะดวกซื้อ","โกดังสินค้า","เรือยอชท์","ร้านปืน","คาสิโน","สถานีรถไฟ","ท่าเรือ"];
 const ZONES_EN = ["Bank","Jewelry Store","Gas Station","Highway","Cayo Perico","Airport","Sheriff Office","Hospital","Convenience Store","Warehouse","Yacht","Ammunation","Casino","Train Station","Docks"];
-const INCIDENTS = ["ปล้นทรัพย์","10-90 มีอาวุธ","ยิงปะทะ","แหกด่านตรวจ","บุคคลต้องสงสัย","ไล่ล่า","จับตัวประกัน","ขบรถประมาท","ทำร้ายร่างกาย","ลักพาตัว","ขโมยรถยนต์","เจาหน้าที่บาดเจ็บ"];
+const INCIDENTS = ["ปล้นทรัพย์","10-90 มีอาวุธ","ยิงปะทะ","แหกด่านตรวจ","บุคคลต้องสงสัย","ไล่ล่า","จับตัวประกัน","ขับรถประมาท","ทำร้ายร่างกาย","ลักพาตัว","ขโมยรถยนต์","เจ้าหน้าที่บาดเจ็บ"];
 const INCIDENTS_EN = ["Robbery","Armed 10-90","Shootout","Roadblock breach","Suspicious person","Pursuit","Hostage situation","Reckless driving","Assault","Kidnapping","Grand theft auto","Officer down"];
 
 const CALL_STATUS_FLOW = ["NEW","ACCEPTED","EN_ROUTE","ON_SCENE","CLEARED"];
-const CALL_STATUS_LABEL = { NEW:"รับแจ้งใหม่", ACCEPTED:"รับเรื่องแล้ว", EN_ROUTE:"กำลังเดินทาง", ON_SCENE:"ถงที่เกิดเหตุ", CLEARED:"ปิดงานแล้ว" };
+const CALL_STATUS_LABEL = { NEW:"รับแจ้งใหม่", ACCEPTED:"รับเรื่องแล้ว", EN_ROUTE:"กำลังเดินทาง", ON_SCENE:"ถึงที่เกิดเหตุ", CLEARED:"ปิดงานแล้ว" };
 
 const TEN_CODES = [
   ["10-1","สัญญาณไม่ชัดเจน"],["10-4","รับทราบ"],["10-6","กำลังไม่ว่าง"],["10-7","นอกราชการ"],
   ["10-8","ปฏิบัติหน้าที่ / พร้อมรับเหตุ"],["10-9","พูดซ้ำ"],["10-12","มีผู้เยี่ยมชม / ระวังคำพูด"],
   ["10-15","ควบคุมตัวผู้ต้องสงสัย"],["10-20","แจ้งตำแหน่ง"],["10-23","ถึงที่เกิดเหตุ"],["10-33","สถานการณ์ฉุกเฉิน"],
-  ["10-52","ขอรถพยาบาล"],["10-70","เหตุเพลิงไหม้"],["10-76","กลังเดินทางไปที่เกิดเหตุ"],["10-78","ขอกำลังเสริม"],
+  ["10-52","ขอรถพยาบาล"],["10-70","เหตุเพลิงไหม้"],["10-76","กำลังเดินทางไปที่เกิดเหตุ"],["10-78","ขอกำลังเสริม"],
   ["10-80","ไล่ล่ายานพาหนะ"],["10-90","เหตุมีอาวุธ"],["10-99","ฉุกเฉิน — เจ้าหน้าที่ต้องการความช่วยเหลือทันที"],
   ["Code 4","ควบคุมสถานการณ์ได้แล้ว ไม่ต้องการกำลังเสริม"]
 ];
@@ -428,7 +445,7 @@ async function doLogin(){
     const { data, error } = await supabase.rpc("login_with_pin", { p_pin: pin });
     if(error) throw error;
     if(!data || data.length === 0){
-      errBox.textContent = "⚠ รหัส PIN ไม่ถกต้อง";
+      errBox.textContent = "⚠ รหัส PIN ไม่ถูกต้อง";
       btn.disabled = false; btn.textContent = "เข้าสู่ระบบ";
       return;
     }
@@ -452,7 +469,7 @@ function enterApp(){
   refreshAll();
   pollTimer = setInterval(refreshAll, 5000);
   logLine(`${currentUser.callsign} เข้าสู่ระบบ`);
-  toast(`ยินดีตอนรับ ${currentUser.callsign}`);
+  toast(`ยินดีต้อนรับ ${currentUser.callsign}`);
 }
 
 document.getElementById("logout-btn").addEventListener("click", ()=>{
@@ -545,7 +562,7 @@ async function advanceCall(callId, nextStatus){
     toast("อัปเดตสถานะ Call แล้ว");
     logLine(`อัปเดต Call เป็น ${CALL_STATUS_LABEL[nextStatus]}`);
     refreshAll();
-  }catch(err){ console.error(err); toast("อัปเดตไม่สเร็จ", true); }
+  }catch(err){ console.error(err); toast("อัปเดตไม่สำเร็จ", true); }
 }
 async function claimCall(callId){
   try{
@@ -566,23 +583,28 @@ async function runSearch(){
   const resultsEl = document.getElementById("search-results");
   resultsEl.innerHTML = "";
   if(!raw){ statusEl.textContent = "พิมพ์ชื่อหรือทะเบียนรถเพื่อค้นหา"; statusEl.className = "empty-state"; return; }
-  const q = raw.replace(/[,()%]/g, " ").trim();
+  const q = raw.toLowerCase();
   statusEl.textContent = "กำลังค้นหา…"; statusEl.className = "loading-state";
   try{
-    const { data, error } = await supabase.from("records").select("*").or(`name.ilike.%${q}%,plate.ilike.%${q}%`).limit(25);
-    if(error) throw error;
-    if(!data || data.length === 0){
+    const rows = await fetchSheetRows(DATABASE_SHEET_ID, DATABASE_SHEET_TAB);
+    const matches = rows.filter(r => {
+      const name = (r[DB_COL.name] || "").toLowerCase();
+      const plate = (r[DB_COL.plate] || "").toLowerCase();
+      return name.includes(q) || plate.includes(q);
+    }).slice(0, 25);
+
+    if(matches.length === 0){
       statusEl.textContent = "ไม่พบข้อมูล"; statusEl.className = "empty-state";
       logLine(`ค้นหา "${raw}" — ไม่พบข้อมูล`);
       notifySearch(raw, []);
       return;
     }
-    statusEl.textContent = `พบ ${data.length} รายการ`; statusEl.className = "empty-state";
-    data.forEach(r => resultsEl.appendChild(renderRecord(r)));
-    logLine(`ค้นหา "${raw}" — พบ ${data.length} รายการ`);
-    notifySearch(raw, data);
+    statusEl.textContent = `พบ ${matches.length} รายการ`; statusEl.className = "empty-state";
+    matches.forEach(r => resultsEl.appendChild(renderRecord(r)));
+    logLine(`ค้นหา "${raw}" — พบ ${matches.length} รายการ`);
+    notifySearch(raw, matches);
   }catch(err){
-    console.error(err); statusEl.textContent = "ค้นหาไม่สำเร็จ"; statusEl.className = "error-state";
+    console.error(err); statusEl.textContent = "ค้นหาไม่สำเร็จ — เช็คว่าชีตแชร์เป็น public แล้วหรือยัง"; statusEl.className = "error-state";
   }
 }
 
@@ -597,8 +619,8 @@ function notifySearch(query, matches){
     const r = matches[0];
     embed = { title:"🔍 การสืบค้นข้อมูล — พบผลลัพธ์", color:0x4fb2ff, fields:[
       { name:"คำค้นหา", value: query, inline:true }, { name:"จำนวนที่พบ", value:String(matches.length), inline:true },
-      { name:"รายการแรก", value: r.name || "ไม่ทราบชื่อ", inline:false },
-      { name:"ทะเบียน", value: r.plate || "—", inline:true }, { name:"ค่าปรับ", value: String(r.fines ?? "0"), inline:true },
+      { name:"รายการแรก", value: r[DB_COL.name] || "ไม่ทราบชื่อ", inline:false },
+      { name:"ทะเบียน", value: r[DB_COL.plate] || "—", inline:true }, { name:"ค่าปรับ", value: String(r[DB_COL.fines] ?? "0"), inline:true },
       { name:"ผู้ค้นหา", value: who, inline:false } ], timestamp:new Date().toISOString() };
   }
   postToDiscord({ embeds:[embed] });
@@ -606,7 +628,7 @@ function notifySearch(query, matches){
 
 function renderRecord(r){
   const div = document.createElement("div"); div.className = "record";
-  const fines = r.fines ?? 0;
+  const fines = r[DB_COL.fines] || "0";
   const finesFlag = (parseFloat(fines) || 0) > 0 ? "flag-bad" : "flag-ok";
   div.innerHTML = `
     <div class="rname"></div>
@@ -620,23 +642,23 @@ function renderRecord(r){
     </div>
     <div class="call-actions"><button class="btn-small blue">ส่งรายบุคคลเข้า Discord</button></div>
   `;
-  div.querySelector(".rname").textContent = r.name || "ไม่ทราบชื่อ";
-  div.querySelector(".v-plate").textContent = r.plate || "—";
-  div.querySelector(".v-vtype").textContent = r.vehicle_type || "—";
-  div.querySelector(".v-expiry").textContent = r.expiry || "—";
+  div.querySelector(".rname").textContent = r[DB_COL.name] || "ไม่ทราบชื่อ";
+  div.querySelector(".v-plate").textContent = r[DB_COL.plate] || "—";
+  div.querySelector(".v-vtype").textContent = r[DB_COL.vtype] || "—";
+  div.querySelector(".v-expiry").textContent = r[DB_COL.expiry] || "—";
   div.querySelector(".v-fines").textContent = String(fines);
-  div.querySelector(".v-license").textContent = r.license_status || "—";
-  div.querySelector(".v-gun").textContent = r.gun_permit || "—";
-  div.querySelector("button").addEventListener("click", (e)=>{
+  div.querySelector(".v-license").textContent = r[DB_COL.license] || "—";
+  div.querySelector(".v-gun").textContent = r[DB_COL.gunpermit] || "—";
+  div.querySelector("button").addEventListener("click", ()=>{
     const who = currentUser ? `${currentUser.callsign} — ${currentUser.name}` : "ไม่ทราบหน่วย";
     postToDiscord({ embeds:[{ title:"📋 ส่งข้อมูลบุคคล", color:0x38ffa0, fields:[
-      { name:"ชื่อ", value:r.name||"—", inline:true }, { name:"ทะเบียน", value:r.plate||"—", inline:true },
-      { name:"ประเภทรถ", value:r.vehicle_type||"—", inline:true }, { name:"วันหมดอายุ", value:r.expiry||"—", inline:true },
-      { name:"ค่าปรับ", value:String(fines), inline:true }, { name:"ใบขับขี่", value:r.license_status||"—", inline:true },
-      { name:"ใบอนุญาตปืน", value:r.gun_permit||"—", inline:true }, { name:"ส่งโดย", value: who, inline:false }
+      { name:"ชื่อ", value:r[DB_COL.name]||"—", inline:true }, { name:"ทะเบียน", value:r[DB_COL.plate]||"—", inline:true },
+      { name:"ประเภทรถ", value:r[DB_COL.vtype]||"—", inline:true }, { name:"วันหมดอายุ", value:r[DB_COL.expiry]||"—", inline:true },
+      { name:"ค่าปรับ", value:String(fines), inline:true }, { name:"ใบขับขี่", value:r[DB_COL.license]||"—", inline:true },
+      { name:"ใบอนุญาตปืน", value:r[DB_COL.gunpermit]||"—", inline:true }, { name:"ส่งโดย", value: who, inline:false }
     ], timestamp:new Date().toISOString() }] });
     toast("ส่งข้อมูลเข้า Discord แล้ว");
-    logLine(`ส่งข้อมูลบุคคล "${r.name}" เข้า Discord`);
+    logLine(`ส่งข้อมูลบุคคล "${r[DB_COL.name]}" เข้า Discord`);
   });
   return div;
 }
@@ -672,7 +694,7 @@ document.getElementById("send-bolo-btn").addEventListener("click", async ()=>{
     list.prepend(item);
     document.getElementById("bolo-target").value = ""; document.getElementById("bolo-notes").value = "";
   }catch(err){
-    console.error(err); statusEl.textContent = "ออกประกาศไม่สเร็จ"; statusEl.className = "error-state";
+    console.error(err); statusEl.textContent = "ออกประกาศไม่สำเร็จ"; statusEl.className = "error-state";
   }finally{
     btn.disabled = false; btn.textContent = "ออกประกาศเข้า Discord";
   }
@@ -706,7 +728,7 @@ async function sendSOS(){
   const location = selectedZoneIdx !== null ? ZONES[selectedZoneIdx] : "ไม่ระบุ";
   try{
     await supabase.rpc("insert_sos_log", { p_callsign: currentUser.callsign, p_name: currentUser.name, p_rank: currentUser.rank, p_location: location });
-  }catch(err){ console.error("บันทึก sos log ไม่สเร็จ", err); }
+  }catch(err){ console.error("บันทึก sos log ไม่สำเร็จ", err); }
   await postToDiscord({
     content: "@here **มีการกดปุ่ม SOS ฉุกเฉิน**",
     embeds: [{ title:"🆘 SOS — เจ้าหน้าที่ต้องการความช่วยเหลือด่วน", color:0xff3b3b, fields:[
@@ -795,7 +817,7 @@ function renderCall(c){
   div.querySelector(".call-badge").textContent = CALL_STATUS_LABEL[c.status] || c.status;
 
   const metaParts = [];
-  metaParts.push("แจงโดย: " + (c.created_by || "ไม่ทราบ"));
+  metaParts.push("แจ้งโดย: " + (c.created_by || "ไม่ทราบ"));
   if(c.assigned_to) metaParts.push("รับผิดชอบ: " + c.assigned_to);
   if(c.notes) metaParts.push(c.notes);
   div.querySelector(".call-meta").textContent = metaParts.join(" · ");
@@ -803,7 +825,7 @@ function renderCall(c){
   const actions = div.querySelector(".call-actions");
   if(!c.assigned_to && c.status !== "CLEARED"){
     const claimBtn = document.createElement("button");
-    claimBtn.className = "btn-small blue"; claimBtn.textContent = "รับเรือง";
+    claimBtn.className = "btn-small blue"; claimBtn.textContent = "รับเรื่อง";
     claimBtn.addEventListener("click", ()=>claimCall(c.id));
     actions.appendChild(claimBtn);
   }
